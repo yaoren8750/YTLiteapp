@@ -58,6 +58,7 @@ class HomeViewController: VideosViewController {
         setupEmptyViews()
         setupToolbar()
         observeSignOut()
+        observeTokenRefresh()
         loadCachedOrFetchFeed()
     }
 
@@ -120,7 +121,7 @@ class HomeViewController: VideosViewController {
         loadFeed()
     }
 
-    private func loadFeed() {
+    func loadFeed() {
         let t0 = Date()
         AppLog.home("network fetch start")
         errorLabel.isHidden = true

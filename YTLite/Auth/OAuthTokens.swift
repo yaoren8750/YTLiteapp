@@ -16,4 +16,7 @@ extension Notification.Name {
     static let userDidSignOut = Notification.Name(
         "userDidSignOut"
     )
+    static let tokenDidRefresh = Notification.Name(
+        "tokenDidRefresh"
+    )
 }

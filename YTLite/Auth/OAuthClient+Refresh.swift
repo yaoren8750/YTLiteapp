@@ -19,6 +19,7 @@ extension OAuthClient {
                 AppLog.auth(
                     "Token auto-refreshed on 401"
                 )
+                self?.notifyTokenRefreshed()
             case .failure:
                 AppLog.auth(
                     "Refresh failed on 401"
@@ -48,7 +49,7 @@ extension OAuthClient {
         guard let tokens else {
             return
         }
-        doRefresh(tokens: tokens) { result in
+        doRefresh(tokens: tokens) { [weak self] result in
             if case .success = result {
                 UserDefaults.standard.set(
                     Date().timeIntervalSince1970,
@@ -57,7 +58,17 @@ extension OAuthClient {
                 AppLog.auth(
                     "Periodic token refresh succeeded"
                 )
+                self?.notifyTokenRefreshed()
             }
+        }
+    }
+
+    private func notifyTokenRefreshed() {
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(
+                name: .tokenDidRefresh,
+                object: nil
+            )
         }
     }
 }
