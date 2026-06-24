@@ -27,9 +27,14 @@ final class AppCache {
     }
 
     // MARK: - Instance Properties
-    let feedTTL: TimeInterval = 24 * 60 * 60
+    var feedTTL: TimeInterval {
+        let days = UserDefaults.standard.object(
+            forKey: UserDefaultsKeys.Cache.feedCacheDays
+        ) as? Int ?? 1
+        return TimeInterval(days) * 24 * 60 * 60
+    }
     private let watchPageTTL: TimeInterval = 60 * 60
-    private let channelInfoTTL: TimeInterval = 24 * 60 * 60
+    var channelInfoTTL: TimeInterval { feedTTL }
     let diskQueue = DispatchQueue(label: "com.verback.YTLite.AppCache.disk")
     var homeFeed: FeedPage?
     var subscriptionsFeed: FeedPage?
@@ -168,4 +173,22 @@ final class AppCache {
     }
 
     // MARK: - Clear All
+}
+
+extension AppCache {
+    static func mergeFeeds(
+        existing: FeedPage,
+        fresh: FeedPage
+    ) -> FeedPage {
+        var seen = Set(existing.videos.map(\.id))
+        var merged = fresh.videos
+        for video in existing.videos where !seen.contains(video.id) {
+            merged.append(video)
+            seen.insert(video.id)
+        }
+        return FeedPage(
+            videos: merged,
+            continuation: fresh.continuation
+        )
+    }
 }

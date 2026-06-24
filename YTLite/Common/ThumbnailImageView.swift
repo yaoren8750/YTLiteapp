@@ -3,6 +3,13 @@ import UIKit
 class ThumbnailImageView: UIImageView {
     private static let cache = ImageMemoryCache()
     private static let diskCache = ImageDiskCache()
+
+    static var cachingEnabled: Bool {
+        UserDefaults.standard.object(
+            forKey: UserDefaultsKeys.Cache.imageCacheEnabled
+        ) as? Bool ?? true
+    }
+
     private var currentURL: URL?
     private var task: URLSessionDataTask?
 
@@ -57,7 +64,8 @@ class ThumbnailImageView: UIImageView {
     }
 
     private func loadFromDiskOrNetwork(url: URL, cacheKey: String) {
-        if let cached = ThumbnailImageView.diskCache.image(for: url) {
+        if ThumbnailImageView.cachingEnabled,
+           let cached = ThumbnailImageView.diskCache.image(for: url) {
             AppLog.img("disk-hit \(url.lastPathComponent)")
             ThumbnailImageView.cache.setObject(cached, forKey: cacheKey, cost: cached.memoryCost)
             DispatchQueue.main.async { [weak self] in
@@ -98,7 +106,9 @@ class ThumbnailImageView: UIImageView {
                 return
             }
             ThumbnailImageView.cache.setObject(img, forKey: cacheKey, cost: img.memoryCost)
-            ThumbnailImageView.diskCache.store(data: data, for: url)
+            if ThumbnailImageView.cachingEnabled {
+                ThumbnailImageView.diskCache.store(data: data, for: url)
+            }
             AppLog.img("stored \(url.lastPathComponent)")
             DispatchQueue.main.async { [weak self] in
                 guard self?.currentURL == url else {
@@ -153,7 +163,13 @@ private final class ImageMemoryCache {
 private final class ImageDiskCache {
     private let fm = FileManager.default
     private let cacheDir: URL
-    private let ttl: TimeInterval = 60 * 60 * 24 * 7
+
+    private var ttl: TimeInterval {
+        let days = UserDefaults.standard.object(
+            forKey: UserDefaultsKeys.Cache.imageCacheDays
+        ) as? Int ?? 7
+        return TimeInterval(days) * 60 * 60 * 24
+    }
 
     init() {
         let caches = fm.urls(

@@ -5,7 +5,9 @@ import UIKit
 final class SettingsViewController: UIViewController {
     private enum Row {
         case theme, quality, backgroundPlayback, pipEnabled, showShorts
-        case persistCache, clearCache, rydEnabled
+        case persistCache, feedCacheDays
+        case imageCacheEnabled, imageCacheDays
+        case clearCache, rydEnabled
         case sponsorBlockEnabled, sponsorBlockSettings
         case shareLog
     }
@@ -31,6 +33,15 @@ final class SettingsViewController: UIViewController {
         let sbFooter = SponsorBlockService.enabled
             ? SponsorBlockService.attributionText
             : nil
+        var cacheRows: [Row] = [.persistCache]
+        if AppCache.persistenceEnabled {
+            cacheRows.append(.feedCacheDays)
+        }
+        cacheRows.append(.imageCacheEnabled)
+        if ThumbnailImageView.cachingEnabled {
+            cacheRows.append(.imageCacheDays)
+        }
+        cacheRows.append(.clearCache)
         return [
             Section(header: "Theme", footer: nil, rows: [.theme]),
             Section(
@@ -38,7 +49,7 @@ final class SettingsViewController: UIViewController {
                 footer: nil,
                 rows: [.quality, .backgroundPlayback, .pipEnabled, .showShorts]
             ),
-            Section(header: "Cache", footer: nil, rows: [.persistCache, .clearCache]),
+            Section(header: "Cache", footer: nil, rows: cacheRows),
             Section(header: "Return YouTube Dislike", footer: rydFooter, rows: [.rydEnabled]),
             Section(header: "SponsorBlock", footer: sbFooter, rows: sponsorBlockRows),
             Section(header: "Debug", footer: nil, rows: [.shareLog]),
@@ -134,9 +145,36 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
         case .showShorts:
             return makeShowShortsCell()
         case .persistCache:
-            return makeToggleCell("Keep feed cache 24h", isOn: AppCache.persistenceEnabled) {
+            return makeToggleCell("Feed Cache", isOn: AppCache.persistenceEnabled) {
                 AppCache.persistenceEnabled = $0
+                self.reloadCacheSection()
             }
+        case .feedCacheDays:
+            let days = UserDefaults.standard.object(
+                forKey: UserDefaultsKeys.Cache.feedCacheDays
+            ) as? Int ?? 1
+            let suffix = days == 1 ? "" : "s"
+            return makeDisclosureCell(
+                "Feed Cache Duration", value: "\(days) day\(suffix)"
+            )
+        case .imageCacheEnabled:
+            return makeToggleCell(
+                "Image Cache",
+                isOn: ThumbnailImageView.cachingEnabled
+            ) {
+                UserDefaults.standard.set(
+                    $0, forKey: UserDefaultsKeys.Cache.imageCacheEnabled
+                )
+                self.reloadCacheSection()
+            }
+        case .imageCacheDays:
+            let days = UserDefaults.standard.object(
+                forKey: UserDefaultsKeys.Cache.imageCacheDays
+            ) as? Int ?? 7
+            let suffix = days == 1 ? "" : "s"
+            return makeDisclosureCell(
+                "Image Cache Duration", value: "\(days) day\(suffix)"
+            )
         case .clearCache:
             return makeDestructiveCell("Clear All Cache")
         case .rydEnabled:
@@ -158,6 +196,10 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
         switch sections[indexPath.section].rows[indexPath.row] {
         case .quality:
             showQualityPicker()
+        case .feedCacheDays:
+            showFeedCacheDaysPicker()
+        case .imageCacheDays:
+            showImageCacheDaysPicker()
         case .clearCache:
             clearCache()
         case .sponsorBlockSettings:
@@ -266,12 +308,85 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
         configureCenteredPopover(sheet)
         present(sheet, animated: true)
     }
+
+    private func showFeedCacheDaysPicker() {
+        let options = [1, 2, 3, 5, 7]
+        let current = UserDefaults.standard.object(
+            forKey: UserDefaultsKeys.Cache.feedCacheDays
+        ) as? Int ?? 1
+        let sheet = UIAlertController(
+            title: "Feed Cache Duration",
+            message: nil,
+            preferredStyle: .actionSheet
+        )
+        for days in options {
+            let action = UIAlertAction(
+                title: "\(days) day\(days == 1 ? "" : "s")",
+                style: .default
+            ) { _ in
+                UserDefaults.standard.set(
+                    days, forKey: UserDefaultsKeys.Cache.feedCacheDays
+                )
+                self.tableView.reloadData()
+            }
+            if days == current {
+                action.setValue(true, forKey: "checked")
+            }
+            sheet.addAction(action)
+        }
+        sheet.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        configureCenteredPopover(sheet)
+        present(sheet, animated: true)
+    }
+
+    private func showImageCacheDaysPicker() {
+        let options = [1, 3, 7, 14, 30]
+        let current = UserDefaults.standard.object(
+            forKey: UserDefaultsKeys.Cache.imageCacheDays
+        ) as? Int ?? 7
+        let sheet = UIAlertController(
+            title: "Image Cache Duration",
+            message: nil,
+            preferredStyle: .actionSheet
+        )
+        for days in options {
+            let action = UIAlertAction(
+                title: "\(days) day\(days == 1 ? "" : "s")",
+                style: .default
+            ) { _ in
+                UserDefaults.standard.set(
+                    days, forKey: UserDefaultsKeys.Cache.imageCacheDays
+                )
+                self.tableView.reloadData()
+            }
+            if days == current {
+                action.setValue(true, forKey: "checked")
+            }
+            sheet.addAction(action)
+        }
+        sheet.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        configureCenteredPopover(sheet)
+        present(sheet, animated: true)
+    }
+
+    private func reloadCacheSection() {
+        let cacheIndex = sections.firstIndex {
+            $0.rows.contains(.persistCache)
+        }
+        if let cacheIndex {
+            tableView.reloadSections(
+                IndexSet(integer: cacheIndex),
+                with: .none
+            )
+        }
+    }
     private func clearCache() {
         ThumbnailImageView.clearCache()
         AppCache.shared.clearAllDiskCache()
+        WatchProgressStore.shared.clearAll()
         presentSimpleAlert(
             title: "Cache Cleared",
-            message: "Image and feed cache has been cleared."
+            message: "All cache has been cleared."
         )
     }
 

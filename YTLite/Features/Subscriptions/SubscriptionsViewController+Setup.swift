@@ -10,8 +10,11 @@ extension SubscriptionsViewController {
             showSignInPrompt(true)
             return
         }
+        let firstVisit = !ScreenVisitTracker.hasVisited("subscriptions")
         cache.loadSubscriptionsFeed { [weak self] cachedPage in
-            self?.handleCachedSubscriptions(cachedPage)
+            self?.handleCachedSubscriptions(
+                cachedPage, firstVisit: firstVisit
+            )
         }
     }
 
@@ -153,7 +156,8 @@ extension SubscriptionsViewController {
 
 private extension SubscriptionsViewController {
     func handleCachedSubscriptions(
-        _ cachedPage: FeedPage?
+        _ cachedPage: FeedPage?,
+        firstVisit: Bool = true
     ) {
         if let cachedPage {
             AppLog.subs(
@@ -164,9 +168,41 @@ private extension SubscriptionsViewController {
             isLoadingInitial = false
             spinner.stopAnimating()
             setPage(cachedPage)
+            if firstVisit {
+                ScreenVisitTracker.markVisited("subscriptions")
+                fetchSubscriptionsInBackground()
+            }
         } else {
             AppLog.subs("no cache → network")
             loadFeed()
+        }
+    }
+
+    private func fetchSubscriptionsInBackground() {
+        let t0 = Date()
+        service.fetchSubscriptionFeed { [weak self] result in
+            DispatchQueue.main.async {
+                guard let self else {
+                    return
+                }
+                let ms = Int(Date().timeIntervalSince(t0) * 1_000)
+                switch result {
+                case .success(let page):
+                    AppLog.subs("background fetch done \(ms)ms videos=\(page.videos.count)")
+                    if let existing = self.cache.cachedSubscriptionsFeed() {
+                        let merged = AppCache.mergeFeeds(
+                            existing: existing, fresh: page
+                        )
+                        self.cache.setSubscriptionsFeed(merged)
+                        self.setPage(merged)
+                    } else {
+                        self.cache.setSubscriptionsFeed(page)
+                        self.setPage(page)
+                    }
+                case .failure(let err):
+                    AppLog.subs("background fetch failed \(ms)ms: \(err)")
+                }
+            }
         }
     }
 

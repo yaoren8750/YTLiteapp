@@ -69,6 +69,15 @@ final class WatchProgressStore {
         return WatchProgress(fraction: frac)
     }
 
+    func clearAll() {
+        queue.async(flags: .barrier) {
+            self.serverFractions.removeAll()
+            UserDefaults.standard.removeObject(
+                forKey: self.fractionKey
+            )
+        }
+    }
+
     // MARK: - Persistence
 
     private func loadFractions() {

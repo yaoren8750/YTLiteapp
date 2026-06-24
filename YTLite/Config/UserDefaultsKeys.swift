@@ -11,6 +11,9 @@ enum UserDefaultsKeys {
 
     enum Cache {
         static let feedPersistenceEnabled = "feedCachePersistenceEnabled"
+        static let feedCacheDays = "feedCacheDays"
+        static let imageCacheEnabled = "imageCacheEnabled"
+        static let imageCacheDays = "imageCacheDays"
     }
 
     enum Auth {
