@@ -1,7 +1,7 @@
 #!/bin/bash
 # make_ipa.sh — builds a distributable IPA for jailbroken devices (AppSync + Filza)
 # Usage: ./make_ipa.sh
-# Output: YTLite_<version>_<build>.ipa in the project root
+# Output: YTLite_<version>.ipa in the project root
 
 set -e
 
@@ -30,8 +30,7 @@ BUILD_SETTINGS=$(xcodebuild \
 
 BUILD_DIR=$(echo "$BUILD_SETTINGS" | grep "^ *BUILT_PRODUCTS_DIR" | head -1 | awk -F' = ' '{print $2}')
 VERSION=$(echo "$BUILD_SETTINGS" | grep "^ *MARKETING_VERSION" | head -1 | awk -F' = ' '{print $2}')
-BUILD=$(git -C "$(dirname "$0")" rev-list --count HEAD 2>/dev/null || echo "0")
-OUTPUT="${APP_NAME}_${VERSION}_${BUILD}.ipa"
+OUTPUT="${APP_NAME}_${VERSION}.ipa"
 
 APP_PATH="$BUILD_DIR/$APP_NAME.app"
 
@@ -59,11 +58,11 @@ rm -rf "$TMP"
 IPA_SIZE=$(stat -f%z "$OUTPUT" 2>/dev/null || stat -c%s "$OUTPUT" 2>/dev/null)
 DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 REPO_URL="https://github.com/verback2308/YTLite"
-DOWNLOAD_URL="$REPO_URL/releases/download/${VERSION}_${BUILD}/${OUTPUT}"
+DOWNLOAD_URL="$REPO_URL/releases/download/${VERSION}/${OUTPUT}"
 
 echo "▶ Updating source: $SOURCE_JSON"
 python3 -c "
-import json, sys
+import json
 
 with open('$SOURCE_JSON', 'r') as f:
     data = json.load(f)

@@ -171,7 +171,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "BUILD=$(git -C \"$SRCROOT\" rev-list --count HEAD 2>/dev/null || echo 1)\nif [ -f \"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\" ]; then\n  /usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $BUILD\" \"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\n  echo \"Build number set to $BUILD\"\nfi\n";
+			shellScript = "if [ -f \"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\" ]; then\n  /usr/libexec/PlistBuddy -c \"Set :CFBundleVersion 1\" \"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
