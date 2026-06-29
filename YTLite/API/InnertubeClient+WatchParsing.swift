@@ -68,25 +68,65 @@ extension InnertubeClient {
         ) {
             return info
         }
-        // Try to extract channelId from owner renderers
-        var enriched = fallbackVideo
-        if enriched.channelId == nil,
-           let chId = extractOwnerInfo(json).channelId {
-            enriched = Video(
-                id: fallbackVideo.id,
-                title: fallbackVideo.title,
-                channelId: chId,
-                channelName: fallbackVideo.channelName,
-                channelAvatarURL: nil,
-                thumbnailURL: fallbackVideo.thumbnailURL,
-                viewCount: fallbackVideo.viewCount,
-                publishedAt: fallbackVideo.publishedAt,
-                duration: fallbackVideo.duration,
-                isLive: fallbackVideo.isLive,
-                playlistId: fallbackVideo.playlistId
-            )
+        let enriched = enrichWithOwnerInfo(
+            json, video: fallbackVideo
+        )
+        if let info = buildFallbackChannel(
+            fallbackVideo: enriched
+        ) {
+            return info
         }
-        return buildFallbackChannel(fallbackVideo: enriched)
+        return fallbackBrowseIdChannel(
+            json, video: fallbackVideo
+        )
+    }
+
+    private static func enrichWithOwnerInfo(
+        _ json: [String: Any],
+        video: Video
+    ) -> Video {
+        guard video.channelId == nil else {
+            return video
+        }
+        let owner = extractOwnerInfo(json)
+        guard let chId = owner.channelId else {
+            return video
+        }
+        return Video(
+            id: video.id,
+            title: video.title,
+            channelId: chId,
+            channelName: video.channelName,
+            channelAvatarURL: owner.avatarURL,
+            thumbnailURL: video.thumbnailURL,
+            viewCount: video.viewCount,
+            publishedAt: video.publishedAt,
+            duration: video.duration,
+            isLive: video.isLive,
+            playlistId: video.playlistId
+        )
+    }
+
+    private static func fallbackBrowseIdChannel(
+        _ json: [String: Any],
+        video: Video
+    ) -> ChannelInfo? {
+        guard let chId = firstMatchingBrowseId(
+            in: json
+        ) else {
+            return nil
+        }
+        return ChannelInfo(
+            id: chId,
+            title: video.channelName,
+            avatarURL: nil,
+            subscriberCountText: nil,
+            bannerURL: nil,
+            isVerified: false,
+            description: nil,
+            contactInfo: nil,
+            videoCountText: nil
+        )
     }
 
     // Extract channelId + avatarURL from slimOwnerRenderer / videoOwnerRenderer
