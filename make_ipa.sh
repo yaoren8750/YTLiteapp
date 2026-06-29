@@ -8,6 +8,7 @@ set -e
 APP_NAME="YTLite"
 PROJECT="YTLite.xcodeproj"
 SCHEME="YTVLite"
+RELEASE_BUNDLE_ID="com.verback.YTLite"
 
 echo "▶ Building Release for device..."
 xcodebuild \
@@ -37,6 +38,9 @@ if [ ! -d "$APP_PATH" ]; then
   echo "❌ Build failed or app not found at: $APP_PATH"
   exit 1
 fi
+
+echo "▶ Replacing bundle ID for release: $RELEASE_BUNDLE_ID"
+plutil -replace CFBundleIdentifier -string "$RELEASE_BUNDLE_ID" "$APP_PATH/Info.plist"
 
 echo "▶ Replacing dev cert with ad-hoc signature..."
 codesign -f -s - --deep --preserve-metadata=entitlements "$APP_PATH" 2>/dev/null \

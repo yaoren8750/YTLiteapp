@@ -6,17 +6,8 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		858941D3AFEFB0804352CCE1 /* PlaybackQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07F84F478C2B6962B32A3C07 /* PlaybackQueue.swift */; };
-		885141A399E425AFB453E9E3 /* InnertubeClient+PivotParsing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08B2412794928181A0F675B0 /* InnertubeClient+PivotParsing.swift */; };
-		A08F4F0E918ED4F56BAC2C2B /* PlaylistSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7253494D976457B2C31F0E34 /* PlaylistSectionHeaderView.swift */; };
-/* End PBXBuildFile section */
-
 /* Begin PBXFileReference section */
-		07F84F478C2B6962B32A3C07 /* PlaybackQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PlaybackQueue.swift; path = YTLite/Services/PlaybackQueue.swift; sourceTree = SOURCE_ROOT; };
-		08B2412794928181A0F675B0 /* InnertubeClient+PivotParsing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "InnertubeClient+PivotParsing.swift"; path = "YTLite/API/InnertubeClient+PivotParsing.swift"; sourceTree = SOURCE_ROOT; };
 		4940A71F2F6AD27900E6C599 /* YTLite.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YTLite.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		7253494D976457B2C31F0E34 /* PlaylistSectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PlaylistSectionHeaderView.swift; path = YTLite/Common/PlaylistSectionHeaderView.swift; sourceTree = SOURCE_ROOT; };
 		A1B2C3D4E5F6000123456789 /* Local.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Local.xcconfig; path = Config/Local.xcconfig; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -57,9 +48,6 @@
 			children = (
 				4940A7212F6AD27900E6C599 /* YTLite */,
 				4940A7202F6AD27900E6C599 /* Products */,
-				07F84F478C2B6962B32A3C07 /* PlaybackQueue.swift */,
-				08B2412794928181A0F675B0 /* InnertubeClient+PivotParsing.swift */,
-				7253494D976457B2C31F0E34 /* PlaylistSectionHeaderView.swift */,
 				A1B2C3D4E5F6000123456789 /* Local.xcconfig */,
 			);
 			sourceTree = "<group>";
@@ -192,9 +180,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				858941D3AFEFB0804352CCE1 /* PlaybackQueue.swift in Sources */,
-				885141A399E425AFB453E9E3 /* InnertubeClient+PivotParsing.swift in Sources */,
-				A08F4F0E918ED4F56BAC2C2B /* PlaylistSectionHeaderView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
