@@ -309,10 +309,11 @@ extension WatchViewController {
         relatedHeightConstraint = rv.heightAnchor.constraint(equalToConstant: 0)
     }
 
-    /// On iOS 26+ the navigation bar uses a floating "Liquid Glass" style that
-    /// no longer contributes its height to `view.safeAreaInsets`.  When that
-    /// happens the player appears behind the bar.  We detect the gap and
-    /// compensate via `additionalSafeAreaInsets` so Auto Layout still works.
+    /// On iOS 26+ the Liquid Glass nav bar no longer contributes its
+    /// height to `view.safeAreaInsets`.  We measure the gap between the
+    /// nav-bar bottom and the raw safe-area top, then push the player
+    /// container down via `playerTopConstraint.constant` so it always
+    /// starts below the navigation bar.
     func adjustForFloatingNavBar() {
         guard let navBar = navigationController?.navigationBar,
               !navBar.isHidden
@@ -320,16 +321,23 @@ extension WatchViewController {
             if additionalSafeAreaInsets.top != 0 {
                 additionalSafeAreaInsets.top = 0
             }
+            if playerTopConstraint?.constant != 0 {
+                playerTopConstraint?.constant = 0
+            }
             return
         }
         let navBarBottom = navBar.convert(
             CGPoint(x: 0, y: navBar.bounds.height),
             to: view
         ).y
-        let systemTop = view.safeAreaInsets.top - additionalSafeAreaInsets.top
-        let extra = max(0, navBarBottom - systemTop)
-        if abs(additionalSafeAreaInsets.top - extra) > 0.5 {
-            additionalSafeAreaInsets.top = extra
+        let safeTop = view.safeAreaInsets.top
+            - additionalSafeAreaInsets.top
+        let offset = max(0, navBarBottom - safeTop)
+        if abs(additionalSafeAreaInsets.top - 0) > 0.5 {
+            additionalSafeAreaInsets.top = 0
+        }
+        if abs((playerTopConstraint?.constant ?? 0) - offset) > 0.5 {
+            playerTopConstraint?.constant = offset
         }
     }
 }

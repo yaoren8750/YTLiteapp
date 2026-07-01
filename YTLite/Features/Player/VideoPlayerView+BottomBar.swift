@@ -83,13 +83,21 @@ extension VideoPlayerView {
     }
 
     private func activateBottomBarConstraints() {
+        activateFullscreenConstraints()
+        activateDurationConstraints()
+        activateCurrentTimeConstraints()
+        activateSeekBarConstraints()
+    }
+
+    private func activateFullscreenConstraints() {
+        let safe = controlsView.safeAreaLayoutGuide
         NSLayoutConstraint.activate([
             fullscreenButton.bottomAnchor.constraint(
-                equalTo: controlsView.bottomAnchor,
+                equalTo: safe.bottomAnchor,
                 constant: -8
             ),
             fullscreenButton.trailingAnchor.constraint(
-                equalTo: controlsView.trailingAnchor,
+                equalTo: safe.trailingAnchor,
                 constant: -8
             ),
             fullscreenButton.widthAnchor.constraint(
@@ -99,37 +107,42 @@ extension VideoPlayerView {
                 equalToConstant: 36
             )
         ])
-        activateTimeLabelConstraints()
-        activateSeekBarConstraints()
     }
 
-    private func activateTimeLabelConstraints() {
+    private func activateDurationConstraints() {
         NSLayoutConstraint.activate([
             durationLabel.centerYAnchor.constraint(
                 equalTo: fullscreenButton.centerYAnchor
             ),
             durationLabel.trailingAnchor.constraint(
                 equalTo: fullscreenButton.leadingAnchor,
-                constant: -4
-            ),
+                constant: -8
+            )
+        ])
+    }
+
+    private func activateCurrentTimeConstraints() {
+        let safe = controlsView.safeAreaLayoutGuide
+        NSLayoutConstraint.activate([
             currentTimeLabel.centerYAnchor.constraint(
                 equalTo: fullscreenButton.centerYAnchor
             ),
             currentTimeLabel.leadingAnchor.constraint(
-                equalTo: controlsView.leadingAnchor,
+                equalTo: safe.leadingAnchor,
                 constant: 12
             )
         ])
     }
 
     private func activateSeekBarConstraints() {
+        let safe = controlsView.safeAreaLayoutGuide
         NSLayoutConstraint.activate([
             seekBar.leadingAnchor.constraint(
-                equalTo: controlsView.leadingAnchor,
+                equalTo: safe.leadingAnchor,
                 constant: 12
             ),
             seekBar.trailingAnchor.constraint(
-                equalTo: controlsView.trailingAnchor,
+                equalTo: safe.trailingAnchor,
                 constant: -12
             ),
             seekBar.bottomAnchor.constraint(
