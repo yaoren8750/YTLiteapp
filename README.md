@@ -118,7 +118,7 @@ YTLite/
 
 ### Key Design Decisions
 
-- **Zero external dependencies** — Networking via `URLSession`, images via custom `ThumbnailImageView`, playback via `AVPlayer`
+- **Zero external dependencies** — Networking via a custom `HTTPTransport` abstraction over `URLSession`, images via custom `ThumbnailImageView`, playback via `AVPlayer`
 - **All UIKit, no SwiftUI** — Programmatic layout, no storyboards
 - **iOS 12+ support** — No SF Symbols, no SwiftUI, no Combine
 - **Manual JSON parsing** — `JSONSerialization` + dictionary traversal for YouTube Innertube API responses
@@ -126,12 +126,13 @@ YTLite/
 
 ### Playback Pipeline
 
-The app fetches video streams via YouTube's Innertube API. Two strategies are used in practice:
+Playback is built on a single `VideoSource` abstraction — each way of playing a video implements the same interface and owns both stream resolution and quality selection. `PlaybackFacade` just asks a factory for the configured source, calls `loadPlayback`, and hands the prepared `AVPlayerItem` to the player shell. Three sources exist:
 
-1. **Generated HLS** — Adaptive formats (360p–1080p) are converted from DASH SIDX byte ranges into an HLS playlist for native `AVPlayer`. This is the primary path with quality selection.
-2. **Progressive** — Direct 360p MP4 URL as a fallback when YouTube restricts adaptive formats (e.g. during server-side A/B experiments).
+1. **Android VR** *(default)* — Streams via YouTube's Innertube API; adaptive formats (360p–1080p) are converted from DASH SIDX byte ranges into an HLS playlist for native `AVPlayer`, with progressive/native-HLS fallbacks.
+2. **Progressive** — Direct 360p MP4 URL for the restricted case (e.g. server-side A/B experiments).
+3. **WebView HLS** — Extracts an authenticated HLS manifest (resolving the `n` throttling signature on-device or via a remote solver), then proxies segments through a custom `AVAssetResourceLoaderDelegate` for full 144p–1080p quality selection.
 
-If streams are unavailable from the primary client, an **Onesie** fallback requests them through YouTube's proprietary bootstrap API.
+Quality selection is source-agnostic: the player UI simply renders whatever qualities the active source reports. Background audio is `AVAudioSession`-based and works across all sources.
 
 ### Authentication
 
@@ -142,7 +143,7 @@ OAuth device-code flow: the app requests a device code → user enters it at goo
 | Component | Purpose |
 |-----------|---------|
 | `InnertubeClient` | YouTube API: browse, search, player, comments, subscriptions |
-| `PlaybackFacade` | Orchestrates playback strategy selection and player setup |
+| `PlaybackFacade` | Selects a `VideoSource` via factory, loads it, and drives player setup |
 | `VideoPlayerView` | Custom player UI with controls, gestures, PiP |
 | `WatchViewController` | Watch page: player + metadata + comments + related |
 | `AppCache` | Dual-layer cache (memory + disk) with TTL |

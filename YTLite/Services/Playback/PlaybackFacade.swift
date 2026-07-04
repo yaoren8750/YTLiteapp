@@ -21,56 +21,15 @@ enum PlaybackBufferPolicy {
     }
 }
 
-struct PlaybackPipelineContext {
-    let videoId: String
-    let client: DirectPlaybackClient
-    let cancellationToken: CancellationToken
-    let apiClient: WatchService
-}
-
-enum BackgroundPlaybackMode {
-    case inline
-    case audioOnlyHLS
-}
-
-/// Owns the playback pipeline: PoToken minting →
-/// fetchDirectPlayback → onesie fallback → strategy
-/// selection.
+/// Drives source-based playback: picks a `VideoSource` via the factory, loads
+/// it, and hands the prepared item to the `PlaybackContext` (player shell).
 final class PlaybackFacade {
     weak var context: PlaybackContext?
-    var activePlaybackInfo: DirectPlaybackInfo?
-    /// The active `VideoSource` (new pipeline). nil while the legacy strategy
-    /// pipeline is in use (android_vr / progressive).
+    /// The active source — owns stream resolution and quality selection.
     var activeVideoSource: VideoSource?
-    var activePlaybackClient: DirectPlaybackClient = .androidVR
-    var activePlaybackHeaders: [String: String] = [:]
-    var activeVideoFormat: DashFormatInfo?
-    var hlsPlaylistLoader: HLSPlaylistLoader?
-    var backgroundAudioItem: AVPlayerItem?
-    var backgroundRestoreTime: CMTime = .zero
-    var backgroundEnteredAt: Date?
-    var backgroundPlaybackMode: BackgroundPlaybackMode = .inline
-    var playlistSwitchBackgroundTask: UIBackgroundTaskIdentifier = .invalid
-    var activeDirectPlaybackClient: DirectPlaybackClient = .androidVR
-    var backgroundAudioObservation: NSKeyValueObservation?
     let watchtimeTracker = WatchtimeTracker()
     var currentVideoId: String?
     weak var currentApiClient: WatchService?
-
-    /// Whether playback was active before backgrounding.
-    var pendingRestorePlayback = false
-
-    static func makeContentPlaybackNonce(
-        length: Int = 16
-    ) -> String {
-        let chars = "abcdefghijklmnopqrstuvwxyz"
-            + "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_"
-        return String(
-            (0 ..< length).compactMap { _ in
-                Array(chars).randomElement()
-            }
-        )
-    }
 }
 
 // MARK: - Public API
@@ -87,7 +46,6 @@ extension PlaybackFacade {
         let source = DefaultVideoSourceFactory(apiClient: apiClient)
             .make(kind: PlaybackSource.selected.sourceKind)
         activeVideoSource = source
-        activeDirectPlaybackClient = source.kind == .webViewHLS ? .web : client
         context?.updateStatusLabel("Resolving stream...")
         source.loadPlayback(
             videoId: videoId,
@@ -122,20 +80,9 @@ extension PlaybackFacade {
     }
 
     func reset() {
-        backgroundAudioObservation = nil
-        backgroundAudioItem = nil
-        hlsPlaylistLoader = nil
-        activePlaybackInfo = nil
         activeVideoSource = nil
-        activeVideoFormat = nil
-        activePlaybackHeaders = [:]
-        backgroundRestoreTime = .zero
-        backgroundEnteredAt = nil
-        backgroundPlaybackMode = .inline
-        activeDirectPlaybackClient = .androidVR
         watchtimeTracker.stop()
         currentVideoId = nil
         currentApiClient = nil
-        pendingRestorePlayback = false
     }
 }

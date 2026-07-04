@@ -3,50 +3,14 @@ import Foundation
 
 // MARK: - PlaybackContext
 
-/// All side-effects a PlaybackStrategy needs from its host view controller.
-/// WatchViewController conforms to this protocol.
+/// The side-effects a `VideoSource`-driven playback needs from its host view
+/// controller (WatchViewController conforms).
 protocol PlaybackContext: AnyObject {
-    func attachPlayer(url: URL)
     /// Attaches a source-prepared item, retaining its resource loader; seeks to
     /// `resumeAt` when set (quality switches keep the current position).
     func attachPrepared(_ prepared: PreparedPlayback, resumeAt: CMTime?)
-    func attachDirectPlayer(
-        url: URL,
-        visitorData: String?,
-        client: DirectPlaybackClient
-    )
-    func attachComposedPlayer(
-        videoURL: URL,
-        audioURL: URL,
-        headers: [String: String],
-        completion: @escaping (Bool) -> Void
-    )
-    // swiftlint:disable:next function_parameter_count
-    func buildHLSAndPlay(
-        videoURL: URL,
-        audioURL: URL,
-        videoFormat: DashFormatInfo,
-        audioFormat: DashFormatInfo,
-        headers: [String: String],
-        quality: String
-    )
-    func prepareAdaptiveUpgrade(
-        videoURL: URL,
-        audioURL: URL,
-        headers: [String: String],
-        quality: String
-    )
     func updateStatusLabel(_ text: String)
     func showPlaybackError(_ message: String)
-    func makeDirectRequestHeaders(
-        visitorData: String?,
-        client: DirectPlaybackClient
-    ) -> [String: String]
-    func prepareDirectPlaybackURL(
-        baseURL: URL,
-        client: DirectPlaybackClient,
-        poToken: String?
-    ) -> URL
     func startObservingPlayerItem(_ item: AVPlayerItem)
     func stopObservingPlayerItem(_ item: AVPlayerItem)
     func setCaptionTracks(_ tracks: [SubtitleTrack])
