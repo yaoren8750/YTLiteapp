@@ -106,6 +106,13 @@ final class NavChevronButton: UIView {
         alignToScreenEdge()
     }
 
+    /// Re-measures and shifts the view. Call after a navigation transition
+    /// settles — alignment computed mid-animation bakes in the slot's
+    /// in-flight position.
+    func realign() {
+        alignToScreenEdge()
+    }
+
     private func alignToScreenEdge() {
         guard let window else {
             transform = .identity

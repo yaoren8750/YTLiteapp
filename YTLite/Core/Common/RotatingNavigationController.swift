@@ -30,6 +30,7 @@ final class RotatingNavigationController: UINavigationController {
         // Replacing the system back button disables the edge-swipe pop
         // gesture; re-enable it (guarded so the root screen never pops).
         interactivePopGestureRecognizer?.delegate = self
+        delegate = self
         applyBarTheme()
         NotificationCenter.default.addObserver(
             self,
@@ -91,5 +92,42 @@ final class RotatingNavigationController: UINavigationController {
 extension RotatingNavigationController: UIGestureRecognizerDelegate {
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         viewControllers.count > 1
+    }
+}
+
+// MARK: - Chevron realignment after transitions
+
+// The chevron aligns itself to the screen edge in layoutSubviews, but a
+// layout pass that runs mid-push measures the slot's in-flight position and
+// bakes in a wrong shift. Re-align once the transition settles (covering a
+// cancelled interactive pop, where `didShow` never fires for the target).
+extension RotatingNavigationController: UINavigationControllerDelegate {
+    private static func realignChevron(of viewController: UIViewController?) {
+        let item = viewController?.navigationItem.leftBarButtonItem
+        (item?.customView as? NavChevronButton)?.realign()
+    }
+
+    func navigationController(
+        _ navigationController: UINavigationController,
+        willShow viewController: UIViewController,
+        animated: Bool
+    ) {
+        guard let coordinator = navigationController.transitionCoordinator else {
+            return
+        }
+        coordinator.animate(alongsideTransition: nil) { context in
+            let shown = context.isCancelled
+                ? navigationController.topViewController
+                : viewController
+            Self.realignChevron(of: shown)
+        }
+    }
+
+    func navigationController(
+        _ navigationController: UINavigationController,
+        didShow viewController: UIViewController,
+        animated: Bool
+    ) {
+        Self.realignChevron(of: viewController)
     }
 }
