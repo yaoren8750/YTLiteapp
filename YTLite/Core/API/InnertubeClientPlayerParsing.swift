@@ -231,7 +231,9 @@ private extension InnertubeClient {
             width: fmt["width"] as? Int,
             height: fmt["height"] as? Int,
             fps: fmt["fps"] as? Int,
-            qualityLabel: fmt["qualityLabel"] as? String
+            qualityLabel: fmt["qualityLabel"] as? String,
+            sigChallenge: fmt[sigChallengeKey] as? String,
+            sigParam: fmt[sigParamKey] as? String
         )
     }
     // swiftlint:enable function_parameter_count

@@ -223,6 +223,11 @@ private extension InnertubeClient {
         videoId: String,
         client: DirectPlaybackClient
     ) -> DirectPlaybackInfo? {
+        // Only the mweb source can finish ciphered URLs (it owns the
+        // watch-page player context the sig solve needs).
+        let json = client == .mweb
+            ? unwrappingSignatureCiphers(json)
+            : json
         guard let info = parseDirectPlaybackInfo(json) else {
             logDirectPlaybackError(
                 json: json,

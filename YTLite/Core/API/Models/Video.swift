@@ -117,6 +117,12 @@ struct DashFormatInfo {
     /// from `height` — non-16:9 videos have off-ladder heights (1920x1012 is
     /// still the "1080p" tier, not "1012p").
     let qualityLabel: String?
+    /// Ciphered `s` challenge when the format arrived as a `signatureCipher`
+    /// (mweb; kids content) — `url` 403s until the solved value is appended
+    /// as the `sigParam` query parameter.
+    let sigChallenge: String?
+    /// Query-param name for the solved signature (`sp` from the cipher).
+    let sigParam: String?
 }
 
 struct DirectPlaybackInfo {

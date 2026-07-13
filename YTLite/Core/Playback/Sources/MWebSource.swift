@@ -188,9 +188,9 @@ private extension MWebSource {
         }
     }
 
-    /// Solves each DISTINCT `n` once (video and audio typically share the
-    /// value — one remote round-trip instead of two), then waits for the
-    /// parallel pot mint before building.
+    /// Solves each DISTINCT challenge once — `n` for both URLs plus, on
+    /// ciphered (kids) formats, the `signatureCipher` `s` — then waits for
+    /// the parallel pot mint before building.
     func solveThenBuild(
         info: DirectPlaybackInfo,
         video: DashFormatInfo,
@@ -198,28 +198,47 @@ private extension MWebSource {
         completion: @escaping (Result<PreparedPlayback, Error>) -> Void
     ) {
         let group = DispatchGroup()
-        var solved = SolvedStreams(
-            video: video, audio: audio, videoURL: video.url, audioURL: audio.url
-        )
+        let solutions = SolutionBox()
         for unsolved in Set([video.url, audio.url].compactMap(Self.nValue)) {
             group.enter()
             resolver.solveN(unsolved: unsolved, jsPath: Self.cachedJsPath) { result in
                 AppLog.player("mwebSource: n \(unsolved) -> \(result ?? "FAILED(nil)")")
-                if let result {
-                    if Self.nValue(of: video.url) == unsolved {
-                        solved.videoURL = Self.replacingN(in: video.url, solved: result)
-                    }
-                    if Self.nValue(of: audio.url) == unsolved {
-                        solved.audioURL = Self.replacingN(in: audio.url, solved: result)
-                    }
-                }
+                solutions.store(kind: .nThrottle, unsolved: unsolved, solved: result)
+                group.leave()
+            }
+        }
+        for challenge in Set([video, audio].compactMap { $0.sigChallenge }) {
+            group.enter()
+            resolver.solveSig(unsolved: challenge, jsPath: Self.cachedJsPath) { result in
+                AppLog.player(
+                    "mwebSource: sig \(result == nil ? "FAILED" : "solved")"
+                )
+                solutions.store(kind: .sig, unsolved: challenge, solved: result)
                 group.leave()
             }
         }
         group.notify(queue: .main) { [weak self] in
-            self?.potWait.notify(queue: .main) { [weak self] in
-                self?.buildGeneratedHLS(info: info, streams: solved, completion: completion)
-            }
+            self?.finishBuild(
+                info: info,
+                streams: Self.makeStreams(video: video, audio: audio, solutions: solutions),
+                completion: completion
+            )
+        }
+    }
+
+    /// Builds once the pot mint lands. `streams` is nil when a sig challenge
+    /// stayed unsolved — that format is unplayable (every range 403s).
+    func finishBuild(
+        info: DirectPlaybackInfo,
+        streams: SolvedStreams?,
+        completion: @escaping (Result<PreparedPlayback, Error>) -> Void
+    ) {
+        guard let streams else {
+            completion(.failure(Self.noStreamError))
+            return
+        }
+        potWait.notify(queue: .main) { [weak self] in
+            self?.buildGeneratedHLS(info: info, streams: streams, completion: completion)
         }
     }
 }
