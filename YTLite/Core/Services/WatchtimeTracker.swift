@@ -6,7 +6,10 @@ import Foundation
 /// --mark-watched.
 final class WatchtimeTracker {
     private static let pingInterval: TimeInterval = 15
-    private let cpn: String = WatchtimeTracker.makeCPN()
+    // Client playback nonce — YouTube dedupes stats by it, so a
+    // fresh value is required per playback or history entries for
+    // subsequent videos (autoplay/related) are silently dropped.
+    private var cpn: String = WatchtimeTracker.makeCPN()
     private let transport: HTTPTransport
     private var pingTimer: Timer?
     private var urls: WatchtimeURLs?
@@ -33,6 +36,7 @@ final class WatchtimeTracker {
 
     func start(videoId: String, urls: WatchtimeURLs) {
         stop()
+        cpn = Self.makeCPN()
         self.videoId = videoId
         self.urls = urls
         sessionStart = Date()
