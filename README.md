@@ -17,16 +17,17 @@ When Google dropped support for the official YouTube app on older devices, there
 ## Features
 
 - **Video Playback** — up to 1080p 60fps quality
+- **Kids Content** — plays videos the standard API sources refuse, via a dedicated playback source
 - **Background Audio** — Continue listening with the screen off
 - **Picture-in-Picture** — Watch while using other apps
 - **SponsorBlock** — Skip sponsored segments automatically
 - **Return YouTube Dislike** — See dislike counts again
 - **Subtitles** — Full subtitle/caption support with VTT parsing
-- **Search & Browse** — Home feed, trending, channel pages, playlists
+- **Search & Browse** — Search with live suggestions and recent-search history, home feed, trending, channel pages, playlists
 - **Subscriptions** — Follow channels with a local subscription feed
 - **Watch History** — Track what you've watched with progress indicators, synced across devices
 - **Autoplay** — Automatically play the next related video
-- **Dark/Light Theme** — Manual theme switching via ThemeManager
+- **Auto Theme** — Follows system dark mode on iOS 13+, scheduled hours on iOS 12; manual override available
 
 <p align="center">
   <img src="screenshots/settings.PNG" width="300" alt="Settings">
@@ -65,12 +66,19 @@ cp Config/Local.xcconfig.example Config/Local.xcconfig
 
 ## Known Issues and Limitations
 
-- Kids content is not available — the current API source does not return it; may be added later
-- Audio track selection is not possible (same API limitation)
+- Audio track selection is not possible yet (dubbed videos play their original audio)
 - Playback speeds above 2x may cause issues
 - **Shorts** are not natively supported — they are treated as regular videos, but can be hidden from the subscriptions feed
 - Comments are displayed as a flat read-only list
 - Offline download is not yet available
+
+## Playback Helper Server
+
+The Mobile Web playback source (used for videos the primary source can't open, e.g. kids content) relies on a small companion service. Preparing these streams requires evaluating JavaScript from YouTube's public player page — something iOS 12-era devices can't do on-device. The app delegates that single step to the helper server and receives the computed result back.
+
+**What it sees:** no account data, no tokens, no cookies, no watch history — only the challenge strings taken from the public player code and the ID of the video being prepared. If you're inspecting traffic and wondering about requests to a non-YouTube host — that's this.
+
+The server's source code will be published later so you can host your own instance and point the app at it (**Settings → Debug → Solver Server**).
 
 ## Bug Reports
 
@@ -129,11 +137,12 @@ YTLite/
 
 ### Playback Pipeline
 
-Playback is built on a single `VideoSource` abstraction — each way of playing a video implements the same interface and owns both stream resolution and quality selection. `PlaybackFacade` just asks a factory for the configured source, calls `loadPlayback`, and hands the prepared `AVPlayerItem` to the player shell. Three sources exist:
+Playback is built on a single `VideoSource` abstraction — each way of playing a video implements the same interface and owns both stream resolution and quality selection. `PlaybackFacade` just asks a factory for the configured source, calls `loadPlayback`, and hands the prepared `AVPlayerItem` to the player shell. The sources:
 
-1. **Android VR** *(default)* — Streams via YouTube's Innertube API; adaptive formats (360p–1080p) are converted from DASH SIDX byte ranges into an HLS playlist for native `AVPlayer`, with progressive/native-HLS fallbacks.
-2. **Progressive** — Direct 360p MP4 URL for the restricted case (e.g. server-side A/B experiments).
-3. **WebView HLS** — Extracts an authenticated HLS manifest (resolving the `n` throttling signature on-device or via a remote solver), then proxies segments through a custom `AVAssetResourceLoaderDelegate` for full 144p–1080p quality selection.
+1. **Auto** *(default)* — Composite: tries Android VR first, transparently falls back to Mobile Web when a video fails to resolve or start.
+2. **Android VR** — Streams via YouTube's Innertube API; adaptive formats (360p–1080p) are converted from DASH SIDX byte ranges into an HLS playlist for native `AVPlayer`, with progressive/native-HLS fallbacks.
+3. **Mobile Web** — Handles videos the Android VR client refuses (e.g. kids content). Stream URLs require solving JavaScript challenges from the player page; that step is delegated to the helper server (see above), everything else stays on-device.
+4. **Progressive** — Direct 360p MP4 URL for the restricted case (e.g. server-side A/B experiments).
 
 Quality selection is source-agnostic: the player UI simply renders whatever qualities the active source reports. Background audio is `AVAudioSession`-based and works across all sources.
 

@@ -12,22 +12,22 @@
       "subtitle": "YouTube client for iOS 12+",
       "versions": [
         {
-          "version": "1.3.0",
-          "date": "2026-07-09T22:59:57Z",
-          "localizedDescription": "New Features\n- Add channel filter to Subscriptions screen\n- Speed up playback start: persist visitorData, play immediately\n\nBug Fixes\n- Fix player hidden behind nav bar on iOS 26+\n- Fix landscape/fullscreen transitions and controls layout\n- Fix mini-player background pause and iOS 12 chevron inset\n- Fix lock-screen autoplay and Control Center audio hiccup\n- Restore suggestion-autoplay countdown\n- Restore subscriptions order client-side (WEB browse rejected for device tokens)\n\nUI/UX\n- Unify navigation bar style with consistent chevron alignment\n- One chevron button on every screen; no PiP from minimized player\n- Align nav chevrons during transitions for smooth navigation",
-          "downloadURL": "https://github.com/verback2308/YTLite/releases/download/1.3.0/YTLite_1.3.0.ipa",
-          "size": 4357811,
+          "version": "1.4.0",
+          "date": "2026-07-14T11:11:29Z",
+          "localizedDescription": "New Features\n- Kids content now plays! The long-awaited one: a new Mobile Web playback source handles videos the fast source can't open, including kids content\n- Smarter search: live suggestions as you type, plus recent searches under the search bar (swipe to delete)\n- Auto playback source: picks the fastest source and silently falls back if a video fails to start\n- Auto theme: follows system dark mode on iOS 13+, custom schedule on iOS 12\n- Cleaner fullscreen: status bar hides during fullscreen playback (Settings toggle to keep it)\n\nBug Fixes\n- Videos played by autoplay (e.g. while you sleep) now correctly appear in your YouTube watch history\n- Commenter avatars now load; anyone without one gets a colored monogram instead of an empty circle",
+          "downloadURL": "https://github.com/verback2308/YTLite/releases/download/1.4.0/YTLite_1.4.0.ipa",
+          "size": 4375336,
           "minOSVersion": "12.0"
         }
       ],
-      "version": "1.3.0",
-      "versionDate": "2026-07-09T22:59:57Z",
-      "versionDescription": "New Features\n- Add channel filter to Subscriptions screen\n- Speed up playback start: persist visitorData, play immediately\n\nBug Fixes\n- Fix player hidden behind nav bar on iOS 26+\n- Fix landscape/fullscreen transitions and controls layout\n- Fix mini-player background pause and iOS 12 chevron inset\n- Fix lock-screen autoplay and Control Center audio hiccup\n- Restore suggestion-autoplay countdown\n- Restore subscriptions order client-side (WEB browse rejected for device tokens)\n\nUI/UX\n- Unify navigation bar style with consistent chevron alignment\n- One chevron button on every screen; no PiP from minimized player\n- Align nav chevrons during transitions for smooth navigation",
-      "downloadURL": "https://github.com/verback2308/YTLite/releases/download/1.3.0/YTLite_1.3.0.ipa",
+      "version": "1.4.0",
+      "versionDate": "2026-07-14T11:11:29Z",
+      "versionDescription": "New Features\n- Kids content now plays! The long-awaited one: a new Mobile Web playback source handles videos the fast source can't open, including kids content\n- Smarter search: live suggestions as you type, plus recent searches under the search bar (swipe to delete)\n- Auto playback source: picks the fastest source and silently falls back if a video fails to start\n- Auto theme: follows system dark mode on iOS 13+, custom schedule on iOS 12\n- Cleaner fullscreen: status bar hides during fullscreen playback (Settings toggle to keep it)\n\nBug Fixes\n- Videos played by autoplay (e.g. while you sleep) now correctly appear in your YouTube watch history\n- Commenter avatars now load; anyone without one gets a colored monogram instead of an empty circle",
+      "downloadURL": "https://github.com/verback2308/YTLite/releases/download/1.4.0/YTLite_1.4.0.ipa",
       "localizedDescription": "A lightweight YouTube client for iOS 12+. No ads, no tracking. Features: SponsorBlock, Return YouTube Dislike, 1080p playback, background audio, PiP, subtitles, and more.",
       "iconURL": "https://raw.githubusercontent.com/verback2308/YTLite/main/source/icon.png",
       "tintColor": "FF0000",
-      "size": 4357811,
+      "size": 4375336,
       "category": "entertainment",
       "minOSVersion": "12.0"
     }

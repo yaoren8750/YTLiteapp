@@ -209,7 +209,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3.0;
+				MARKETING_VERSION = 1.4.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.verback.YTLite.test;
 				PRODUCT_NAME = YTLite;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -245,7 +245,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3.0;
+				MARKETING_VERSION = 1.4.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.verback.YTLite.test;
 				PRODUCT_NAME = YTLite;
 				PROVISIONING_PROFILE_SPECIFIER = "";
