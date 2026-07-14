@@ -61,6 +61,10 @@ enum UserDefaultsKeys {
         static let playbackSource = "debug_playbackSource"
         static let serverBaseURL = "debug_serverBaseURL"
     }
+
+    enum Migration {
+        static let playbackSourceAuto = "migration_playbackSourceAuto"
+    }
 }
 
 // MARK: - PlaybackSource

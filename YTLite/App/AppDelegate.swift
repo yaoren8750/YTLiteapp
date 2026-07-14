@@ -9,6 +9,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
+        runMigrations()
         configureSharedDependencies()
         ThemeManager.shared.applyGlobal()
         BackgroundPlaybackService.apply()
@@ -17,21 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             ReturnYouTubeDislikeService.shared.prepareIfNeeded()
         }
         window = UIWindow(frame: UIScreen.main.bounds)
-
-        let splash = SplashViewController()
-        splash.onComplete = { [weak self] in
-            if OAuthClient.shared.isSignedIn {
-                UserProfileStore.shared.load()
-                OAuthClient.shared.refreshIfStale()
-                self?.showMain()
-                WatchProgressSyncService.shared.syncIfNeeded()
-            } else if OAuthClient.shared.isAnonymous {
-                self?.showMain()
-            } else {
-                self?.showAuth()
-            }
-        }
-        window?.rootViewController = splash
+        window?.rootViewController = makeSplashViewController()
         window?.makeKeyAndVisible()
 
         NotificationCenter.default.addObserver(
@@ -47,6 +34,46 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Auto theme can go stale in the background (schedule boundary or a
         // system appearance change while suspended).
         ThemeManager.shared.refreshAutoTheme()
+    }
+
+    private func makeSplashViewController() -> SplashViewController {
+        let splash = SplashViewController()
+        splash.onComplete = { [weak self] in
+            if OAuthClient.shared.isSignedIn {
+                UserProfileStore.shared.load()
+                OAuthClient.shared.refreshIfStale()
+                self?.showMain()
+                WatchProgressSyncService.shared.syncIfNeeded()
+            } else if OAuthClient.shared.isAnonymous {
+                self?.showMain()
+            } else {
+                self?.showAuth()
+            }
+        }
+        return splash
+    }
+
+    private func runMigrations() {
+        // Before the Auto source existed, android_vr was both the default and
+        // an explicit picker choice, so stored values are indistinguishable
+        // from "never touched it". Move them to Auto once; anyone re-picking
+        // Android VR afterwards keeps it.
+        let defaults = UserDefaults.standard
+        guard !defaults.bool(
+            forKey: UserDefaultsKeys.Migration.playbackSourceAuto
+        ) else { return }
+        defaults.set(
+            true,
+            forKey: UserDefaultsKeys.Migration.playbackSourceAuto
+        )
+        let stored = defaults.string(
+            forKey: UserDefaultsKeys.Debug.playbackSource
+        )
+        if stored == PlaybackSource.androidVR.rawValue {
+            defaults.removeObject(
+                forKey: UserDefaultsKeys.Debug.playbackSource
+            )
+        }
     }
 
     private func configureSharedDependencies() {
