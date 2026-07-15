@@ -70,6 +70,9 @@ jobs:
           XCODEBUILD_EXTRA_ARGS: CODE_SIGNING_ALLOWED=NO
         run: ./make_ipa.sh
 
+      - name: Build Cydia/Sileo debs
+        run: ./make_deb.sh
+
       - name: Create draft release
         env:
           GH_TOKEN: ${{ github.token }}
@@ -83,7 +86,10 @@ jobs:
               echo "Deleting stale draft release $id"
               gh api -X DELETE "repos/${{ github.repository }}/releases/$id"
             done
-          gh release create "$VERSION" "YTLite_${VERSION}.ipa" \
+          gh release create "$VERSION" \
+            "YTLite_${VERSION}.ipa" \
+            "com.verback.ytlite_${VERSION}_iphoneos-arm.deb" \
+            "com.verback.ytlite_${VERSION}_iphoneos-arm64.deb" \
             --draft \
             --title "$VERSION" \
             --generate-notes \

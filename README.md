@@ -118,6 +118,18 @@ cp Config/Local.xcconfig.example Config/Local.xcconfig
 
 ### Jailbroken devices
 
+**Option 1 — Cydia/Sileo repo (recommended)**
+
+Add the repo to your package manager to install YTLite and receive automatic updates:
+
+```
+https://verback2308.github.io/YTLite/
+```
+
+Rootful (`iphoneos-arm`) and rootless (`iphoneos-arm64`) packages are provided; Sileo, Zebra and Cydia are supported. Every released version stays available in the repo, so you can also install or roll back to an older one (Sileo/Zebra: package page → version list). If you previously installed the IPA via AppSync, uninstall it before installing from the repo.
+
+**Option 2 — Manual install**
+
 Install the `.ipa` package directly:
 - **Filza** — open the `.ipa` file → Install
 - **ReProvision** — sign and install the IPA from the app
