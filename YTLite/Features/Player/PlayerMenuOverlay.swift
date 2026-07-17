@@ -21,6 +21,18 @@ final class PlayerMenuOverlay: UIView {
         case themed
     }
 
+    /// Larger touch targets on iPad — 44pt rows are hard to hit on the
+    /// mini's dense screen; iPhone keeps the compact layout.
+    private enum Metrics {
+        static let isPad = UIDevice.current.userInterfaceIdiom == .pad
+        static let panelWidth: CGFloat = isPad ? 360 : 280
+        static let rowHeight: CGFloat = isPad ? 56 : 44
+        static let rowFontSize: CGFloat = isPad ? 17 : 15
+        static let titleFontSize: CGFloat = isPad ? 15 : 13
+        /// Six compact rows / seven tall rows before scrolling kicks in.
+        static let maxRowsHeight: CGFloat = isPad ? 392 : 264
+    }
+
     private var items: [PlayerMenuItem] = []
     private var style: Style = .overVideo
     private let panel = UIView()
@@ -87,7 +99,9 @@ final class PlayerMenuOverlay: UIView {
         let titleLabel = UILabel()
         titleLabel.text = title
         titleLabel.textColor = titleColor
-        titleLabel.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
+        titleLabel.font = UIFont.systemFont(
+            ofSize: Metrics.titleFontSize, weight: .semibold
+        )
         titleLabel.textAlignment = .center
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         panel.addSubview(titleLabel)
@@ -127,10 +141,12 @@ final class PlayerMenuOverlay: UIView {
         button.tag = index
         button.setTitle(item.title, for: .normal)
         button.setTitleColor(item.isDestructive ? .systemRed : rowColor, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 15)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: Metrics.rowFontSize)
         button.contentHorizontalAlignment = .left
         button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-        button.heightAnchor.constraint(equalToConstant: 44).isActive = true
+        button.heightAnchor.constraint(
+            equalToConstant: Metrics.rowHeight
+        ).isActive = true
         button.addTarget(self, action: #selector(rowTapped(_:)), for: .touchUpInside)
         return button
     }
@@ -139,7 +155,7 @@ final class PlayerMenuOverlay: UIView {
         NSLayoutConstraint.activate([
             panel.centerXAnchor.constraint(equalTo: centerXAnchor),
             panel.centerYAnchor.constraint(equalTo: centerYAnchor),
-            panel.widthAnchor.constraint(equalToConstant: 280),
+            panel.widthAnchor.constraint(equalToConstant: Metrics.panelWidth),
             panel.heightAnchor.constraint(lessThanOrEqualTo: heightAnchor, constant: -32),
             titleLabel.topAnchor.constraint(equalTo: panel.topAnchor, constant: 14),
             titleLabel.leadingAnchor.constraint(equalTo: panel.leadingAnchor, constant: 16),
@@ -148,7 +164,9 @@ final class PlayerMenuOverlay: UIView {
             scroll.leadingAnchor.constraint(equalTo: panel.leadingAnchor),
             scroll.trailingAnchor.constraint(equalTo: panel.trailingAnchor),
             scroll.bottomAnchor.constraint(equalTo: panel.bottomAnchor, constant: -8),
-            scroll.heightAnchor.constraint(lessThanOrEqualToConstant: 264)
+            scroll.heightAnchor.constraint(
+                lessThanOrEqualToConstant: Metrics.maxRowsHeight
+            )
         ])
     }
 
