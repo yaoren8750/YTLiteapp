@@ -30,10 +30,13 @@ final class MWebSource: VideoSource {
     let apiClient: WatchService
     let poTokenService: PoTokenProvider
     let resolver: HLSStreamResolver
+    let liveHLS: LiveHLSPlayback
     let client: DirectPlaybackClient = .mweb
     var info: DirectPlaybackInfo?
     var poToken: String?
     var visitorData: String?
+    /// One-shot guard for the fresh-pot /player retry.
+    var didRetryFreshPot = false
     /// Balances the async pot mint: the pot is only needed as a media-URL
     /// param, so it's minted in parallel with /player + n-solving and the
     /// build step waits on this group.
@@ -47,6 +50,7 @@ final class MWebSource: VideoSource {
         self.apiClient = apiClient
         self.poTokenService = poTokenService
         self.resolver = resolver
+        liveHLS = LiveHLSPlayback(resolver: resolver)
     }
 
     func loadPlayback(
@@ -71,6 +75,10 @@ final class MWebSource: VideoSource {
         _ quality: VideoQuality,
         completion: @escaping (Result<PreparedPlayback, Error>) -> Void
     ) {
+        if liveHLS.isActive {
+            selectLiveQuality(quality, completion: completion)
+            return
+        }
         guard let info,
               let format = info.allDashVideoFormats.first(
                   where: { "\($0.itag)" == quality.id }
@@ -85,77 +93,37 @@ final class MWebSource: VideoSource {
 
     func updateQualityState(from info: DirectPlaybackInfo) {
         self.info = info
+        liveHLS.reset()
         availableQualities = AndroidVRSource.qualities(from: info)
         currentQuality = info.dashVideoFormat.flatMap { selected in
             availableQualities.first { $0.id == "\(selected.itag)" }
         }
     }
-}
 
-// MARK: - Fetch
-
-private extension MWebSource {
-    /// Mints the GVS pot bound to the VIDEO ID — YouTube's current experiment
-    /// binds the mweb pot to the video id, not visitorData (verified against
-    /// yt-dlp + BgUtils). Runs concurrently with /player + n-solving; the
-    /// build step waits on `potWait` before injecting the pot into the URLs.
-    func mintPot(videoId: String) {
-        potWait.enter()
-        poTokenService.fetchSessionToken(identifier: videoId) { [weak self] result in
-            switch result {
-            case .success(let token):
-                AppLog.player("mwebSource: minted pot for videoId (\(token.prefix(12))…)")
-                self?.poToken = token
-            case .failure(let error):
-                AppLog.player("mwebSource: pot mint failed: \(error)")
-                self?.poToken = nil
-            }
-            self?.potWait.leave()
-        }
+    /// `private(set)` keeps the quality setters in this file — the live
+    /// extension (MWebSource+Live) publishes its state through here.
+    func applyLiveQualityState() {
+        availableQualities = liveHLS.qualities
+        currentQuality = liveHLS.startQuality
     }
 
-    func fetchPlayback(
-        videoId: String,
-        cancellation: CancellationToken?,
+    func selectLiveQuality(
+        _ quality: VideoQuality,
         completion: @escaping (Result<PreparedPlayback, Error>) -> Void
     ) {
-        apiClient.fetchMWebPlayback(
-            videoId: videoId,
-            poToken: poToken,
-            visitorData: visitorData,
-            signatureTimestamp: Self.cachedSTS,
-            cancellationToken: cancellation
-        ) { [weak self] result in
-            switch result {
-            case .failure(let error):
-                completion(.failure(error))
-            case .success(let info):
-                self?.handleInfo(info, completion: completion)
-            }
-        }
-    }
-
-    func handleInfo(
-        _ info: DirectPlaybackInfo,
-        completion: @escaping (Result<PreparedPlayback, Error>) -> Void
-    ) {
-        updateQualityState(from: info)
-        AppLog.player(
-            "mwebSource: reqVD=\((visitorData ?? "nil").prefix(24))"
-                + " respVD=\((info.visitorData ?? "nil").prefix(24))"
-        )
-        guard let video = info.dashVideoFormat,
-              let audio = info.dashAudioFormat else {
+        guard let info,
+              let prepared = liveHLS.prepared(for: quality, info: info) else {
             completion(.failure(Self.noStreamError))
             return
         }
-        solveThenBuild(info: info, video: video, audio: audio, completion: completion)
+        currentQuality = quality
+        completion(.success(prepared))
     }
 }
 
 // MARK: - n-solving
 
-private extension MWebSource {
+extension MWebSource {
     /// Scrapes the watch page once per session for the player context pair —
     /// the base.js path (n-solving) and its `"STS"` signatureTimestamp (the
     /// /player claim). Extracted from the SAME HTML so they can never diverge

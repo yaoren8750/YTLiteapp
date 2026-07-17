@@ -9,6 +9,10 @@ protocol PoTokenProvider: AnyObject {
         identifier: String,
         completion: @escaping (Result<String, Error>) -> Void
     )
+
+    /// Drops any cached token for the binding — the next fetch mints fresh.
+    /// Call when YouTube rejects a previously working token (bot-check).
+    func invalidateToken(identifier: String)
 }
 
 /// Fetches the `pot` from a remote bgutil-ytdlp-pot-provider over HTTP. Replaces
@@ -20,10 +24,21 @@ final class RemotePoTokenService: PoTokenProvider {
         case badResponse
     }
 
+    private struct CachedMint {
+        let token: String
+        let minted: Date
+    }
+
     static let shared = RemotePoTokenService()
+    /// GVS rejected a 50-minute-old token in the field, so cached mints go
+    /// stale well before the provider's own multi-hour cache window.
+    private static let tokenTTL: TimeInterval = 30 * 60
 
     private let transport: HTTPTransport
-    private var cache: [String: String] = [:]
+    private var cache: [String: CachedMint] = [:]
+    /// Bindings whose next mint must skip the remote provider's server-side
+    /// cache too — set by `invalidateToken`.
+    private var bypassProviderCache: Set<String> = []
     private let lock = NSLock()
 
     init(transport: HTTPTransport = ServiceContainer.transport) {
@@ -41,7 +56,7 @@ final class RemotePoTokenService: PoTokenProvider {
         }
         guard let endpoint = AppURLs.PoTokenProvider.endpoint,
               let body = try? JSONSerialization.data(
-                  withJSONObject: ["content_binding": identifier]
+                  withJSONObject: requestPayload(identifier: identifier)
               ) else {
             completion(.failure(ProviderError.notConfigured))
             return
@@ -87,15 +102,39 @@ final class RemotePoTokenService: PoTokenProvider {
         return (json?["poToken"] ?? json?["po_token"]) as? String
     }
 
+    func invalidateToken(identifier: String) {
+        lock.lock()
+        defer { lock.unlock() }
+        cache[identifier] = nil
+        bypassProviderCache.insert(identifier)
+    }
+
+    /// `bypass_cache` asks the bgutil provider to re-mint instead of serving
+    /// its own cached token (which is what just got rejected); providers that
+    /// predate the flag simply ignore it.
+    private func requestPayload(identifier: String) -> [String: Any] {
+        lock.lock()
+        defer { lock.unlock() }
+        var payload: [String: Any] = ["content_binding": identifier]
+        if bypassProviderCache.remove(identifier) != nil {
+            payload["bypass_cache"] = true
+        }
+        return payload
+    }
+
     private func cachedToken(for identifier: String) -> String? {
         lock.lock()
         defer { lock.unlock() }
-        return cache[identifier]
+        guard let entry = cache[identifier],
+              Date().timeIntervalSince(entry.minted) < Self.tokenTTL else {
+            return nil
+        }
+        return entry.token
     }
 
     private func storeToken(_ token: String, for identifier: String) {
         lock.lock()
         defer { lock.unlock() }
-        cache[identifier] = token
+        cache[identifier] = CachedMint(token: token, minted: Date())
     }
 }

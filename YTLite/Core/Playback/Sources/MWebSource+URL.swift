@@ -103,4 +103,27 @@ extension MWebSource {
         components.queryItems = items
         return components.url ?? url
     }
+
+    // MARK: - Live-manifest path params
+    //
+    // Live manifest URLs (manifest.googlevideo.com) encode params as path
+    // segments (`/n/<value>/`), not query items. Rewrites go through plain
+    // string replacement — rebuilding the path via URLComponents could
+    // re-encode other segments and invalidate the `sig`.
+
+    static func livePathN(of url: URL) -> String? {
+        HLSStreamResolver.firstMatch(
+            in: url.absoluteString, pattern: "/n/([^/]+)/"
+        )
+    }
+
+    static func replacingLivePathN(in url: URL, solved: String?) -> URL {
+        guard let solved, let unsolved = livePathN(of: url) else {
+            return url
+        }
+        let replaced = url.absoluteString.replacingOccurrences(
+            of: "/n/\(unsolved)/", with: "/n/\(solved)/"
+        )
+        return URL(string: replaced) ?? url
+    }
 }
