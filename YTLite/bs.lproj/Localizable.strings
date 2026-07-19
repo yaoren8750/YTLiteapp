@@ -141,13 +141,11 @@
 "sponsorblock.category.sponsor.name" = "Sponzor";
 "sponsorblock.category.sponsor.description" = "Plaćena promocija, plaćene preporuke i direktni oglasi. Ne uključuje samopromociju ili besplatne preporuke uzroka/kreatora/web-stranica/proizvoda koje vole.";
 "sponsorblock.category.selfpromo.name" = "Neplaćena/Samopromocija";
-"sponsorblock.category.selfpromo.description" = "Slično „sponzoru", osim za neplaćenu ili samopromociju. Uključuje dijelove o robi, donacijama ili informacijama o saradnjama.";
 "sponsorblock.category.exclusive_access.name" = "Ekskluzivni pristup";
 "sponsorblock.category.exclusive_access.description" = "Samo za obilježavanje cijelih videa. Koristi se kad video prikazuje proizvod, uslugu ili lokaciju za koju su dobili besplatni ili subvencionirani pristup.";
 "sponsorblock.category.interaction.name" = "Podsjetnik na interakciju (Pretplati se)";
 "sponsorblock.category.interaction.description" = "Kratak podsjetnik za lajkanje, pretplatu ili praćenje usred sadržaja. Ako je dug ili o nečem specifičnom, trebao bi biti pod samopromocijom.";
 "sponsorblock.category.highlight.name" = "Istaknuto";
-"sponsorblock.category.highlight.description" = "Dio videa koji većina ljudi traži. Slično komentarima „Video počinje u x".";
 "sponsorblock.category.intro.name" = "Pauza/Uvodna animacija";
 "sponsorblock.category.intro.description" = "Interval bez stvarnog sadržaja. Može biti pauza, statični kadar ili ponavljajuća animacija. Ne treba se koristiti za prelaze koji sadrže informacije.";
 "sponsorblock.category.outro.name" = "Završne kartice/Zasluge";

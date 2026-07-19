@@ -141,13 +141,11 @@
 "sponsorblock.category.sponsor.name" = "Спонзор";
 "sponsorblock.category.sponsor.description" = "Платена промоција, платени партнери и директна реклама. Не за самопромоција или бесплатни пофалби за причини/креатори/страници/производи.";
 "sponsorblock.category.selfpromo.name" = "Бесплатна/Самопромоција";
-"sponsorblock.category.selfpromo.description" = "Слично на „спонзор", но за бесплатна или самопромоција. Вклучува секции за производи, донации или информации за соработки.";
 "sponsorblock.category.exclusive_access.name" = "Ексклузивен пристап";
 "sponsorblock.category.exclusive_access.description" = "Само за означување на цели видеа. Се користи кога видеото прикажува производ, услуга или место за кое добиле бесплатен или субвенциониран пристап.";
 "sponsorblock.category.interaction.name" = "Потсетување за интеракција (Претплата)";
 "sponsorblock.category.interaction.description" = "Кога има кратко потсетување за допаѓање, претплата или следење сред содржината. Ако е долго или за нешто конкретно, треба да биде во делот за самопромоција.";
 "sponsorblock.category.highlight.name" = "Клучен дел";
-"sponsorblock.category.highlight.description" = "Делот од видеото што повеќето го бараат. Слично на коментарите „Видеото започнува од x".";
 "sponsorblock.category.intro.name" = "Пауза/Воведна анимација";
 "sponsorblock.category.intro.description" = "Интервал без реална содржина. Може да биде пауза, статична слика или повторувачка анимација. Не треба да се користи за транзиции што содржат информации.";
 "sponsorblock.category.outro.name" = "Крајни карти/Титри";

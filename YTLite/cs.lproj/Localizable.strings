@@ -141,13 +141,11 @@
 "sponsorblock.category.sponsor.name" = "Sponsor";
 "sponsorblock.category.sponsor.description" = "Placená propagace, placená doporučení a přímé reklamy. Ne pro vlastní propagaci nebo bezplatné zmínky o oblíbených příčinách/tvůrcích/webových stránkách/produktech.";
 "sponsorblock.category.selfpromo.name" = "Neplacená/vlastní propagace";
-"sponsorblock.category.selfpromo.description" = "Podobné jako „sponsor", ale neplacená nebo vlastní propagace. Zahrnuje sekce o merchandisu, darech nebo informacích o spolupráci.";
 "sponsorblock.category.exclusive_access.name" = "Exkluzivní přístup";
 "sponsorblock.category.exclusive_access.description" = "Pouze pro označení celých videí. Používá se, když video předvádí produkt, službu nebo místo, ke kterému získali bezplatný nebo dotovaný přístup.";
 "sponsorblock.category.interaction.name" = "Připomínka interakce (Odebírat)";
 "sponsorblock.category.interaction.description" = "Když je uprostřed obsahu krátká připomínka k liku, odebírání nebo sledování. Pokud je dlouhá nebo o něčem konkrétním, měla by být v sekci vlastní propagace.";
 "sponsorblock.category.highlight.name" = "Důležitý okamžik";
-"sponsorblock.category.highlight.description" = "Část videa, kterou většina lidí hledá. Podobné jako komentáře „Video začíná v x".";
 "sponsorblock.category.intro.name" = "Přestávka/Úvodní animace";
 "sponsorblock.category.intro.description" = "Interval bez skutečného obsahu. Může to být pauza, statický snímek nebo opakující se animace. Nemělo by se to používat pro přechody obsahující informace.";
 "sponsorblock.category.outro.name" = "Závěrečné karty/Zásluhy";

@@ -141,13 +141,11 @@
 "sponsorblock.category.sponsor.name" = "Sponsor";
 "sponsorblock.category.sponsor.description" = "Płatna promocja, płatne polecenia i bezpośrednie reklamy. Nie dla autopromocji lub bezpłatnych wzmianek o ulubionych przyczynach/twórcach/stronach/produktach.";
 "sponsorblock.category.selfpromo.name" = "Niepłatna/autopromocja";
-"sponsorblock.category.selfpromo.description" = "Podobne do „sponsor", ale niepłatne lub autopromocja. Obejmuje sekcje o merchandise, darowiznach lub informacjach o współpracy.";
 "sponsorblock.category.exclusive_access.name" = "Ekskluzywny dostęp";
 "sponsorblock.category.exclusive_access.description" = "Tylko do oznaczania całych wideo. Używane, gdy wideo prezentuje produkt, usługę lub lokalizację, do której otrzymano bezpłatny lub dotowany dostęp.";
 "sponsorblock.category.interaction.name" = "Przypomnienie interakcji (Subskrybuj)";
 "sponsorblock.category.interaction.description" = "Gdy w środku treści jest krótkie przypomnienie o polubieniu, subskrybowaniu lub obserwowaniu. Jeśli jest długie lub dotyczy czegoś konkretnego, powinno być w sekcji autopromocji.";
 "sponsorblock.category.highlight.name" = "Wyróżniony moment";
-"sponsorblock.category.highlight.description" = "Część wideo, której szuka większość osób. Podobne do komentarzy „Wideo zaczyna się w x".";
 "sponsorblock.category.intro.name" = "Przerwa/Animacja wstępna";
 "sponsorblock.category.intro.description" = "Interwał bez faktycznych treści. Może to być pauza, statyczna klatka lub powtarzająca się animacja. Nie powinno być używane do przejść zawierających informacje.";
 "sponsorblock.category.outro.name" = "Karty końcowe/Napisy końcowe";

@@ -110,7 +110,11 @@ enum AppLanguage: String, CaseIterable {
         let langCode = String(preferred.prefix(2))
         return AppLanguage(rawValue: langCode) ?? .english
     }
+}
 
+// MARK: - Display names
+
+extension AppLanguage {
     /// Native-script name for the settings picker.
     var displayName: String {
         switch self {

@@ -141,13 +141,13 @@
 "sponsorblock.category.sponsor.name" = "Sponcóir";
 "sponsorblock.category.sponsor.description" = "Cur chun cinn íoctha, tagairtí íoctha agus fógraí díreacha. Ní le haghaidh cur chun cinn féin nó buíochas saor in aisce do chúise/suirbhéirí/láithreáin/táirgí.";
 "sponsorblock.category.selfpromo.name" = "Cur chun cinn saor in aisce/Féin";
-"sponsorblock.category.selfpromo.description" = "Cosúil le „sponcóir" ach le haghaidh cur chun cinn saor in aisce nó féin. Áirítear ranna faoi tháirgí, síntiúsanna nó eolas faoi chomhpháirtithe.";
+"sponsorblock.category.selfpromo.description" = "Cosúil le „sponcóir“ ach le haghaidh cur chun cinn saor in aisce nó féin. Áirítear ranna faoi tháirgí, síntiúsanna nó eolas faoi chomhpháirtithe.";
 "sponsorblock.category.exclusive_access.name" = "Rochtain eisiach";
 "sponsorblock.category.exclusive_access.description" = "Le haghaidh lipéadú físeáin iomlán amháin. Úsáidtear nuair a thaispeánann físeán táirgí, seirbhís nó suíomh ar bhain siad rochtain saor in aisce nó fóirdheontaithe amach.";
 "sponsorblock.category.interaction.name" = "Meabhrúcháin idirghabhála (Liostáil)";
 "sponsorblock.category.interaction.description" = "Nuair a bhíonn meabhrúchán gearr faoi bhreithniú, liostáil nó leanúint i lár ábhair. Má tá sé fada nó faoi rud ar leith, ba cheart a bheith faoi chur chun cinn féin.";
 "sponsorblock.category.highlight.name" = "Páirt thábhachtach";
-"sponsorblock.category.highlight.description" = "An chuid den fhíseán a bhíonn ag lorg an chuid is mó daoine. Cosúil le tuairimí „Tosaíonn an físeán ag x".";
+"sponsorblock.category.highlight.description" = "An chuid den fhíseán a bhíonn ag lorg an chuid is mó daoine. Cosúil le tuairimí „Tosaíonn an físeán ag x“.";
 "sponsorblock.category.intro.name" = "Idirbhreise/Beochan tosaigh";
 "sponsorblock.category.intro.description" = "Idirmhír gan ábhar fíor. Is féidir go mbeadh sos, fráma statach nó beochan atá ag athdhéanamh. Níor cheart é a úsáid le haghaidh trasnáití a bhfuil eolas iontu.";
 "sponsorblock.category.outro.name" = "Cártaí deiridh/Creidmheachtaí";

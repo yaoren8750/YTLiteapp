@@ -21,16 +21,21 @@ PLACEHOLDER_RE = re.compile(r"%(?:\d+\$)?[@dDuUxXoOfeEgGcCsSaAF]|%%")
 
 
 def parse(path):
-    pairs, dupes = {}, []
-    for line in open(path, encoding="utf-8"):
-        match = PAIR_RE.match(line.strip())
+    pairs, dupes, broken = {}, [], []
+    for num, line in enumerate(open(path, encoding="utf-8"), 1):
+        stripped = line.strip()
+        match = PAIR_RE.match(stripped)
         if not match:
+            # a line that LOOKS like a pair but fails the strict regex has
+            # an unescaped quote or missing semicolon (common LLM output bug)
+            if stripped.startswith('"') and '" = "' in stripped:
+                broken.append(num)
             continue
         key, value = match.group(1), match.group(2)
         if key in pairs:
             dupes.append(key)
         pairs[key] = value
-    return pairs, dupes
+    return pairs, dupes, broken
 
 
 def placeholders(value):
@@ -38,15 +43,17 @@ def placeholders(value):
 
 
 def main():
-    en, en_dupes = parse(os.path.join(ROOT, "en.lproj", "Localizable.strings"))
+    en, en_dupes, en_broken = parse(os.path.join(ROOT, "en.lproj", "Localizable.strings"))
     errors = [f"en.lproj: duplicate key '{k}'" for k in en_dupes]
+    errors += [f"en.lproj: malformed line {n}" for n in en_broken]
     warnings = []
     for path in sorted(glob.glob(os.path.join(ROOT, "*.lproj", "Localizable.strings"))):
         lang = os.path.basename(os.path.dirname(path))
         if lang == "en.lproj":
             continue
-        loc, dupes = parse(path)
+        loc, dupes, broken = parse(path)
         errors += [f"{lang}: duplicate key '{k}'" for k in dupes]
+        errors += [f"{lang}: malformed line {n} (unescaped quote?)" for n in broken]
         for key, value in loc.items():
             if key not in en:
                 errors.append(f"{lang}: unknown key '{key}'")
