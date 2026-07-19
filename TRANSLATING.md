@@ -53,7 +53,9 @@ file with ONLY the values translated into the target language.
 3. **Preserve file structure** — keep every line, comment, blank line and
    section header in place; translate comment text only if asked.
 4. **Escapes stay escapes** — `\n` stays `\n` (it is a real line break),
-   `\"` stays an escaped quote. Every line still ends with `";`.
+   `\"` stays an escaped quote. Every line still ends with `";`. NEVER
+   emit a bare `"` inside a value — use your language's typographic
+   quotes („…“, «…», “…”) instead; a bare quote breaks the plist parser.
 5. **Missing is better than wrong** — if unsure about a string, leave the
    English value; the app falls back cleanly.
 
@@ -63,7 +65,8 @@ file with ONLY the values translated into the target language.
   Return YouTube Dislike, Picture-in-Picture stays translated only if your
   language has an established OS term for it (Apple's own glossary).
 - Technical debug values mentioned inside footer texts: "Android VR",
-  "Mobile Web + pot", "pot", "n-solving", "iOS 12–13" — keep verbatim.
+  "Mobile Web + pot", "pot", "n-solving", "iOS 12–13", "Solver server"
+  (also the `settings.row.solverServer` value) — keep verbatim.
 - URLs (returnyoutubedislike.com, sponsor.ajay.app).
 
 ### Glossary and tone
