@@ -65,6 +65,7 @@
 		<string>ta</string>
 		<string>te</string>
 		<string>th</string>
+		<string>tl</string>
 	</array>
 	<key>NSAppTransportSecurity</key>
 	<dict>
