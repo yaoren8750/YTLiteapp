@@ -39,6 +39,7 @@
 		<string>km</string>
 		<string>ko</string>
 		<string>ky</string>
+		<string>lo</string>
 	</array>
 	<key>NSAppTransportSecurity</key>
 	<dict>
