@@ -30,6 +30,7 @@
 		<string>gu</string>
 		<string>hi</string>
 		<string>hr</string>
+		<string>hu</string>
 	</array>
 	<key>NSAppTransportSecurity</key>
 	<dict>
