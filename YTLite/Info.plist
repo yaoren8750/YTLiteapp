@@ -70,6 +70,7 @@
 		<string>uk</string>
 		<string>uz</string>
 		<string>vi</string>
+		<string>zh-Hans</string>
 	</array>
 	<key>NSAppTransportSecurity</key>
 	<dict>
