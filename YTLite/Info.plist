@@ -10,6 +10,7 @@
 		<string>ru</string>
 		<string>af</string>
 		<string>am</string>
+		<string>az</string>
 	</array>
 	<key>NSAppTransportSecurity</key>
 	<dict>
