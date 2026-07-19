@@ -43,6 +43,7 @@
 		<string>lt</string>
 		<string>lv</string>
 		<string>mk</string>
+		<string>ml</string>
 	</array>
 	<key>NSAppTransportSecurity</key>
 	<dict>
