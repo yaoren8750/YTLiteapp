@@ -49,6 +49,12 @@
 "common.subscribed" = "Subscribed";
 /* Generic cancel action */
 "common.cancel" = "Cancel";
+/* Generic confirmation button */
+"common.ok" = "OK";
+/* Generic save action */
+"common.save" = "Save";
+/* Generic done action */
+"common.done" = "Done";
 
 /* ===== Player: status ===== */
 
@@ -122,6 +128,11 @@
 "sponsorblock.behavior.showButton" = "Show button";
 "sponsorblock.behavior.disabled" = "Disable";
 
+/* Footer under the SponsorBlock section (project attribution) */
+"sponsorblock.attribution" = "Powered by SponsorBlock (sponsor.ajay.app) — an open community project.";
+/* Header above the per-category skip settings */
+"sponsorblock.segmentCategories" = "Segment Categories";
+
 /* Category names (SponsorBlock project terms) and their descriptions */
 "sponsorblock.category.sponsor.name" = "Sponsor";
 "sponsorblock.category.sponsor.description" = "Paid promotion, paid referrals and direct advertisements. Not for self-promotion or free shoutouts to causes/creators/websites/products they like.";
@@ -145,3 +156,84 @@
 "sponsorblock.category.music_offtopic.description" = "Only for music videos. Non-music part of a music video.";
 "sponsorblock.category.chapter.name" = "Chapter";
 "sponsorblock.category.chapter.description" = "Custom named sections of the video.";
+
+/* ===== Settings ===== */
+
+/* Settings sheet title */
+"settings.title" = "Settings";
+
+/* Section headers */
+"settings.section.theme" = "Theme";
+"settings.section.playback" = "Playback";
+"settings.section.home" = "Home";
+"settings.section.cache" = "Cache";
+"settings.section.ryd" = "Return YouTube Dislike";
+"settings.section.sponsorblock" = "SponsorBlock";
+"settings.section.debug" = "Debug";
+
+/* Section footers */
+"settings.footer.themeAutoSystem" = "Auto follows the system appearance.";
+"settings.footer.themeAutoHours" = "Auto switches to the dark theme between the hours below.";
+"settings.footer.playback" = "Zoom to Fill automatically scales the video in fullscreen so no black bars remain. Pinch in the player overrides it per video.";
+"settings.footer.home" = "How recommendation shelves are shown: one continuous grid, a grid grouped under shelf titles, or TV-style horizontal rails.";
+"settings.footer.ryd" = "Dislike counts are powered by Return YouTube Dislike (returnyoutubedislike.com) — an open community project.";
+"settings.footer.debug" = "Force a specific playback source. Normally Android VR is used with automatic fallback. The solver server powers the Mobile Web + pot source (pot minting, and n-solving on iOS 12–13).";
+
+/* Theme rows; segment labels for dark/light/auto modes */
+"settings.row.theme" = "Theme";
+"settings.theme.dark" = "Dark";
+"settings.theme.light" = "Light";
+"settings.theme.auto" = "Auto";
+/* Hour pickers bounding the iOS 12 scheduled dark mode */
+"settings.row.darkFrom" = "Dark Theme From";
+"settings.row.darkUntil" = "Dark Theme Until";
+
+/* Playback rows */
+"settings.row.defaultQuality" = "Default Quality";
+/* The "Auto" entry of the default-quality picker (stored value stays English) */
+"settings.quality.auto" = "Auto";
+"settings.row.backgroundPlayback" = "Background Playback";
+"settings.row.pip" = "Picture-in-Picture";
+"settings.row.hideStatusBar" = "Hide Status Bar in Fullscreen";
+"settings.row.zoomToFill" = "Zoom to Fill in Fullscreen";
+"settings.row.showShorts" = "Show YouTube Shorts in Subscriptions";
+
+/* Home layout row + option names */
+"settings.row.homeLayout" = "Home Layout";
+"settings.homeLayout.grid" = "Plain Grid";
+"settings.homeLayout.rails" = "Shelf Rails";
+
+/* Cache rows */
+"settings.row.feedCache" = "Feed Cache";
+"settings.row.feedCacheDuration" = "Feed Cache Duration";
+"settings.row.imageCache" = "Image Cache";
+"settings.row.imageCacheDuration" = "Image Cache Duration";
+"settings.row.clearCache" = "Clear All Cache";
+/* Alert after clearing all caches */
+"settings.cache.clearedTitle" = "Cache Cleared";
+"settings.cache.clearedMessage" = "All cache has been cleared.";
+
+/* Integration rows */
+"settings.row.ryd" = "Return YouTube Dislike";
+"settings.row.sponsorblock" = "SponsorBlock";
+"settings.row.sponsorblockSettings" = "SponsorBlock Settings";
+
+/* Debug rows (values stay technical/English) */
+"settings.row.playbackSource" = "Playback Source";
+"settings.row.solverServer" = "Solver Server";
+"settings.row.shareLog" = "Share Debug Log";
+/* Solver-server URL alert */
+"settings.solver.message" = "URL of the solver server.";
+"settings.solver.reset" = "Reset to default";
+/* Suffix shown after the solver URL when it is the built-in default */
+"settings.solver.defaultSuffix" = " (default)";
+/* Alert when no debug logs exist yet */
+"settings.log.noneTitle" = "No Logs";
+"settings.log.noneMessage" = "No debug logs available yet.";
+
+/* ===== Profile ===== */
+
+"profile.title" = "Profile";
+"profile.signOut" = "Sign Out";
+"profile.clearImageCache" = "Clear Image Cache";
+"profile.imageCacheCleared" = "Image cache cleared.";
