@@ -283,6 +283,10 @@ extension VideosViewController: UICollectionViewDelegateFlowLayout {
     func scrollViewDidScroll(
         _ scrollView: UIScrollView
     ) {
+        guard scrollView === collectionView else {
+            return
+        }
+        topBarHider.handleScroll(scrollView)
         handleScroll(scrollView)
     }
 }

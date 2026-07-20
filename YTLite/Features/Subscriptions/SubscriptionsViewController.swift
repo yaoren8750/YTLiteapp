@@ -26,6 +26,7 @@ class SubscriptionsViewController: UIViewController, ScrollableToTop {
     var stashedSeenVideoIds: Set<String> = []
     var isLoadingInitial = true
     var signInPrompt: SignInEmptyStateView?
+    lazy var topBarHider = TopBarAutoHider(owner: self)
 
     init(
         dependencies: AppDependencies,
@@ -77,7 +78,13 @@ class SubscriptionsViewController: UIViewController, ScrollableToTop {
         updateChannelBarFrame()
     }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        topBarHider.showBars()
+    }
+
     func scrollToTop() {
+        topBarHider.showBars()
         tableView.setContentOffset(
             CGPoint(x: 0, y: -tableView.adjustedContentInset.top),
             animated: true
@@ -151,6 +158,13 @@ extension SubscriptionsViewController: UITableViewDataSource {
 }
 
 extension SubscriptionsViewController: UITableViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        guard scrollView === tableView else {
+            return
+        }
+        topBarHider.handleScroll(scrollView)
+    }
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard !isLoadingInitial else {
             return

@@ -41,8 +41,6 @@ class HomeViewController: VideosViewController {
     var feedGeneration = 0
     /// Session-lifetime cache so tab switches don't refetch.
     var categoryCache: [String: FeedPage] = [:]
-    var isChipBarHidden = false
-    private var lastScrollY: CGFloat = 0
     lazy var chipBar = ChipBarView()
 
     override var groupsByShelf: Bool { HomeLayout.selected == .rails }
@@ -131,21 +129,6 @@ class HomeViewController: VideosViewController {
             refreshAllFeed()
         case .feed, .placeholder:
             refreshAllFeed()
-        }
-    }
-
-    override func handleScroll(_ scrollView: UIScrollView) {
-        let top = scrollView.adjustedContentInset.top
-        let y = scrollView.contentOffset.y + top
-        defer {
-            lastScrollY = y
-        }
-        if y <= 8 {
-            setChipBarHidden(false)
-        } else if y - lastScrollY > 4 {
-            setChipBarHidden(true)
-        } else if y - lastScrollY < -4 {
-            setChipBarHidden(false)
         }
     }
 

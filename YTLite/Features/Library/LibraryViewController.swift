@@ -164,6 +164,11 @@ extension LibraryViewController: ScrollableToTop {
         guard let topVC = currentChild?.topViewController else {
             return
         }
+        // Children that auto-hide the top bar restore it themselves.
+        if let scrollable = topVC as? ScrollableToTop {
+            scrollable.scrollToTop()
+            return
+        }
         let scrollView = topVC.view.subviews.compactMap { $0 as? UIScrollView }.first
         scrollView?.setContentOffset(
             CGPoint(x: 0, y: -(scrollView?.adjustedContentInset.top ?? 0)),

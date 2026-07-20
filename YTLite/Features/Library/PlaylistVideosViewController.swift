@@ -17,6 +17,7 @@ final class PlaylistVideosViewController: UIViewController {
     private let tableView = UITableView()
     private let spinner = UIActivityIndicatorView(style: .white)
     private let emptyLabel = UILabel()
+    private lazy var topBarHider = TopBarAutoHider(owner: self)
 
     init(
         playlist: Playlist,
@@ -53,6 +54,18 @@ final class PlaylistVideosViewController: UIViewController {
             object: nil
         )
         loadVideos()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        topBarHider.showBars()
+    }
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        guard scrollView === tableView else {
+            return
+        }
+        topBarHider.handleScroll(scrollView)
     }
 
     // MARK: - Setup

@@ -16,6 +16,7 @@ final class HistoryViewController: UIViewController {
     private let tableView = UITableView()
     private let spinner = UIActivityIndicatorView(style: .white)
     private let emptyLabel = UILabel()
+    private lazy var topBarHider = TopBarAutoHider(owner: self)
 
     init(
         service: HistoryService,
@@ -58,6 +59,18 @@ final class HistoryViewController: UIViewController {
             isLoadingInitial = false
             showSignInRequired()
         }
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        topBarHider.showBars()
+    }
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        guard scrollView === tableView else {
+            return
+        }
+        topBarHider.handleScroll(scrollView)
     }
 
     // MARK: - Setup
@@ -203,6 +216,16 @@ final class HistoryViewController: UIViewController {
                 }
             }
         }
+    }
+}
+
+extension HistoryViewController: ScrollableToTop {
+    func scrollToTop() {
+        topBarHider.showBars()
+        tableView.setContentOffset(
+            CGPoint(x: 0, y: -tableView.adjustedContentInset.top),
+            animated: true
+        )
     }
 }
 

@@ -26,6 +26,7 @@ class SearchViewController: UIViewController {
     let searchBar = UISearchBar()
     let tableView = UITableView()
     let refreshControl = UIRefreshControl()
+    lazy var topBarHider = TopBarAutoHider(owner: self)
 
     init(
         service: SearchService,
@@ -59,6 +60,20 @@ class SearchViewController: UIViewController {
             name: ThemeManager.didChangeNotification,
             object: nil
         )
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        topBarHider.showBars()
+    }
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        // The same table renders the suggestions panel — keep the top
+        // bar while the user is picking a query.
+        guard scrollView === tableView, panelMode == .hidden else {
+            return
+        }
+        topBarHider.handleScroll(scrollView)
     }
 
     private func setupSearchBar() {
@@ -154,6 +169,7 @@ extension SearchViewController: UISearchBarDelegate {
     }
 
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        topBarHider.showBars()
         searchBar.setShowsCancelButton(true, animated: true)
         updatePanel(for: searchBar.text ?? "")
     }

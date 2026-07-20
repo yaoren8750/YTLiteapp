@@ -11,6 +11,7 @@ final class PlaylistsViewController: UIViewController {
     private let tableView = UITableView()
     private let spinner = UIActivityIndicatorView(style: .white)
     private let emptyLabel = UILabel()
+    private lazy var topBarHider = TopBarAutoHider(owner: self)
 
     init(
         service: PlaylistService,
@@ -50,6 +51,18 @@ final class PlaylistsViewController: UIViewController {
             spinner.stopAnimating()
             showSignInRequired()
         }
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        topBarHider.showBars()
+    }
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        guard scrollView === tableView else {
+            return
+        }
+        topBarHider.handleScroll(scrollView)
     }
 
     private func setupTableView() {
@@ -150,6 +163,18 @@ final class PlaylistsViewController: UIViewController {
                 }
             }
         }
+    }
+}
+
+// MARK: - ScrollableToTop
+
+extension PlaylistsViewController: ScrollableToTop {
+    func scrollToTop() {
+        topBarHider.showBars()
+        tableView.setContentOffset(
+            CGPoint(x: 0, y: -tableView.adjustedContentInset.top),
+            animated: true
+        )
     }
 }
 

@@ -9,6 +9,7 @@ final class SubscribedChannelsViewController: UIViewController {
         String
     ) -> UIViewController
     private let tableView = UITableView()
+    private lazy var topBarHider = TopBarAutoHider(owner: self)
 
     init(
         channels: [SubscribedChannel],
@@ -38,6 +39,18 @@ final class SubscribedChannelsViewController: UIViewController {
             name: ThemeManager.didChangeNotification,
             object: nil
         )
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        topBarHider.showBars()
+    }
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        guard scrollView === tableView else {
+            return
+        }
+        topBarHider.handleScroll(scrollView)
     }
 
     @objc
