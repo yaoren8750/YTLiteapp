@@ -61,7 +61,60 @@
       "tintColor": "FF0000",
       "size": 4301194,
       "category": "entertainment",
-      "minOSVersion": "12.0"
+      "minOSVersion": "12.0",
+      "screenshots": [
+        "https://raw.githubusercontent.com/verback2308/YTLite/main/screenshots/app/iphone/dark/recommendations.jpeg",
+        "https://raw.githubusercontent.com/verback2308/YTLite/main/screenshots/app/iphone/dark/player.jpeg",
+        "https://raw.githubusercontent.com/verback2308/YTLite/main/screenshots/app/iphone/dark/channel.jpeg",
+        "https://raw.githubusercontent.com/verback2308/YTLite/main/screenshots/app/iphone/dark/subscriptions.jpeg",
+        "https://raw.githubusercontent.com/verback2308/YTLite/main/screenshots/app/iphone/dark/settings.jpeg"
+      ],
+      "appPermissions": {
+        "entitlements": [
+          "application-identifier",
+          "com.apple.developer.team-identifier",
+          "get-task-allow"
+        ],
+        "privacy": {}
+      }
+    }
+  ],
+  "iconURL": "https://raw.githubusercontent.com/verback2308/YTLite/main/source/icon.png",
+  "tintColor": "FF0000",
+  "news": [
+    {
+      "title": "YTLite 1.5.0 — 4K, search filters, endless feed",
+      "identifier": "release-1.5.0",
+      "caption": "Pinch to zoom, 2K/4K AV1 playback, smart category chips, stats for nerds and more.",
+      "date": "2026-07-18T13:34:11Z",
+      "tintColor": "FF0000",
+      "appID": "com.verback.YTLite",
+      "url": "https://github.com/verback2308/YTLite/releases/tag/1.5.0"
+    },
+    {
+      "title": "YTLite is now on a Cydia/Sileo repo",
+      "identifier": "sileo-repo",
+      "caption": "Jailbroken? Add the repo for automatic updates — every release stays available for rollback.",
+      "date": "2026-07-15T23:54:09Z",
+      "tintColor": "FF0000",
+      "url": "https://verback2308.github.io/ytlite/"
+    },
+    {
+      "title": "YTLite 1.4.0 — kids content now plays",
+      "identifier": "release-1.4.0",
+      "caption": "New Mobile Web playback source, smarter search, auto playback source and auto theme.",
+      "date": "2026-07-14T11:11:29Z",
+      "tintColor": "FF0000",
+      "appID": "com.verback.YTLite",
+      "url": "https://github.com/verback2308/YTLite/releases/tag/1.4.0"
+    },
+    {
+      "title": "Welcome to the YTLite source",
+      "identifier": "source-launch",
+      "caption": "Add this source to AltStore or SideStore to install YTLite and receive updates automatically.",
+      "date": "2026-07-14T11:00:00Z",
+      "tintColor": "FF0000",
+      "url": "https://github.com/verback2308/YTLite"
     }
   ]
 }
