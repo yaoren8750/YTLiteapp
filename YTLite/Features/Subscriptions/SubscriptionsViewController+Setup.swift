@@ -151,6 +151,7 @@ extension SubscriptionsViewController {
         continuationToken = page.continuation
         isLoadingMore = false
         tableView.reloadData()
+        recomputeNewContentDots()
     }
 
     func finishLoadingMore() {

@@ -39,6 +39,7 @@ extension SubscriptionsViewController {
     func openAllChannels() {
         let list = SubscribedChannelsViewController(
             channels: subscribedChannels,
+            newContentChannelIds: newContentChannelIds,
             channelViewControllerFactory: channelViewControllerFactory
         )
         navigationController?.pushViewController(list, animated: true)

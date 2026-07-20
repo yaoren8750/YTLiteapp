@@ -5,6 +5,7 @@ class SubscriptionsViewController: UIViewController, ScrollableToTop {
     let service: FeedService
     let channelTabsService: ChannelTabService
     let channelsService: SubscribedChannelsService
+    let historyService: HistoryService
     let cache: AppCache
     let channelViewControllerFactory: (
         String,
@@ -27,6 +28,12 @@ class SubscriptionsViewController: UIViewController, ScrollableToTop {
     var isLoadingInitial = true
     var signInPrompt: SignInEmptyStateView?
     lazy var topBarHider = TopBarAutoHider(owner: self)
+    // New-content dots (issue #13): derived state, never persisted.
+    var newContentChannelIds: Set<String> = []
+    var newContentHistoryIds: Set<String>?
+    var newContentHistoryFetchedAt: Date?
+    var isLoadingNewContentHistory = false
+    var locallyWatchedVideoIds: Set<String> = []
 
     init(
         dependencies: AppDependencies,
@@ -36,6 +43,7 @@ class SubscriptionsViewController: UIViewController, ScrollableToTop {
         service = dependencies.feedService
         channelTabsService = dependencies.channelTabService
         channelsService = dependencies.subscribedChannelsService
+        historyService = dependencies.historyService
         channelViewControllerFactory = dependencies.makeChannelViewController
         self.cache = cache
         self.videoRouter = videoRouter
@@ -76,6 +84,11 @@ class SubscriptionsViewController: UIViewController, ScrollableToTop {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         updateChannelBarFrame()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        refreshNewContentDots()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -170,6 +183,7 @@ extension SubscriptionsViewController: UITableViewDelegate {
             return
         }
         let video = videos[indexPath.row]
+        markWatchedLocally(video)
         videoRouter.open(video: video, from: self)
     }
 
