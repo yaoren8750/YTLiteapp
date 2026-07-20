@@ -156,3 +156,18 @@ final class LibraryViewController: UIViewController {
         }
     }
 }
+
+// MARK: - ScrollableToTop
+
+extension LibraryViewController: ScrollableToTop {
+    func scrollToTop() {
+        guard let topVC = currentChild?.topViewController else {
+            return
+        }
+        let scrollView = topVC.view.subviews.compactMap { $0 as? UIScrollView }.first
+        scrollView?.setContentOffset(
+            CGPoint(x: 0, y: -(scrollView?.adjustedContentInset.top ?? 0)),
+            animated: true
+        )
+    }
+}

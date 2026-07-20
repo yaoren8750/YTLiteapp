@@ -1,5 +1,13 @@
 import UIKit
 
+/// A titled group of videos rendered as one collection-view section.
+struct VideoSection {
+    let title: String?
+    var videos: [Video]
+    /// The shelf's own token — rails page horizontally with it.
+    var continuation: String?
+}
+
 // MARK: - Section Accessors
 
 extension VideosViewController {

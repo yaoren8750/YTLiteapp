@@ -122,13 +122,15 @@ extension HomeViewController {
         loadCategory(browseId)
     }
 
-    private func scrollToTop() {
+    @objc
+    override func scrollToTop() {
+        setChipBarHidden(false)
         guard let cv = collectionView else {
             return
         }
         cv.setContentOffset(
             CGPoint(x: 0, y: -cv.adjustedContentInset.top),
-            animated: false
+            animated: true
         )
     }
 

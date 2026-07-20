@@ -1,6 +1,6 @@
 import UIKit
 
-class SubscriptionsViewController: UIViewController {
+class SubscriptionsViewController: UIViewController, ScrollableToTop {
     static let skeletonCount = 6
     let service: FeedService
     let channelTabsService: ChannelTabService
@@ -75,6 +75,13 @@ class SubscriptionsViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         updateChannelBarFrame()
+    }
+
+    func scrollToTop() {
+        tableView.setContentOffset(
+            CGPoint(x: 0, y: -tableView.adjustedContentInset.top),
+            animated: true
+        )
     }
 
     @objc

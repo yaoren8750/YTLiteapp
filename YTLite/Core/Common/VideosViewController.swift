@@ -1,14 +1,6 @@
 import UIKit
 
-/// A titled group of videos rendered as one collection-view section.
-struct VideoSection {
-    let title: String?
-    var videos: [Video]
-    /// The shelf's own token — rails page horizontally with it.
-    var continuation: String?
-}
-
-class VideosViewController: UIViewController {
+class VideosViewController: UIViewController, ScrollableToTop {
     // MARK: - Type Properties
 
     static let skeletonCount = 9
@@ -154,6 +146,14 @@ class VideosViewController: UIViewController {
     func handleRefresh() {}
 
     func handleScroll(_ scrollView: UIScrollView) {}
+
+    @objc dynamic
+    func scrollToTop() {
+        collectionView?.setContentOffset(
+            CGPoint(x: 0, y: -(collectionView?.adjustedContentInset.top ?? 0)),
+            animated: true
+        )
+    }
 
     // Override in subclasses to load next page
     func handleLoadMore() {}
