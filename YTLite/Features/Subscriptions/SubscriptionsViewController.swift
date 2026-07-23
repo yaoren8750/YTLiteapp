@@ -6,6 +6,7 @@ class SubscriptionsViewController: UIViewController, ScrollableToTop {
     let channelTabsService: ChannelTabService
     let channelsService: SubscribedChannelsService
     let historyService: HistoryService
+    let channelRSSService: ChannelRSSFeedService
     let cache: AppCache
     let channelViewControllerFactory: (
         String,
@@ -30,9 +31,11 @@ class SubscriptionsViewController: UIViewController, ScrollableToTop {
     lazy var topBarHider = TopBarAutoHider(owner: self)
     // New-content dots (issue #13): derived state, never persisted.
     var newContentChannelIds: Set<String> = []
+    var newContentUploads: [String: [RSSVideoEntry]] = [:]
     var newContentHistoryIds: Set<String>?
     var newContentHistoryFetchedAt: Date?
     var isLoadingNewContentHistory = false
+    var isLoadingNewContentRSS = false
     var locallyWatchedVideoIds: Set<String> = []
 
     init(
@@ -44,6 +47,7 @@ class SubscriptionsViewController: UIViewController, ScrollableToTop {
         channelTabsService = dependencies.channelTabService
         channelsService = dependencies.subscribedChannelsService
         historyService = dependencies.historyService
+        channelRSSService = dependencies.channelRSSService
         channelViewControllerFactory = dependencies.makeChannelViewController
         self.cache = cache
         self.videoRouter = videoRouter
@@ -130,6 +134,8 @@ class SubscriptionsViewController: UIViewController, ScrollableToTop {
     func handleShowShortsChange() {
         cache.clearSubscriptionsFeed()
         loadFeed()
+        newContentUploads = [:]
+        refreshNewContentDots()
     }
 }
 
