@@ -139,6 +139,7 @@ extension SubscriptionsViewController {
         sortDatesByVideoId = [:]
         videos = []
         appendPage(page)
+        refreshNewContentDots()
     }
 
     func appendPage(_ page: FeedPage) {
@@ -151,7 +152,6 @@ extension SubscriptionsViewController {
         continuationToken = page.continuation
         isLoadingMore = false
         tableView.reloadData()
-        recomputeNewContentDots()
     }
 
     func finishLoadingMore() {

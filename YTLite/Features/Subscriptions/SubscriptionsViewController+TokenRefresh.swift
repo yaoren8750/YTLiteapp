@@ -23,6 +23,7 @@ extension SubscriptionsViewController {
     /// snapshot so its dots don't leak into the new session.
     private func resetNewContentState() {
         newContentChannelIds = []
+        newContentUploads = [:]
         newContentHistoryIds = nil
         newContentHistoryFetchedAt = nil
         locallyWatchedVideoIds = []

@@ -2,19 +2,25 @@ import UIKit
 
 // MARK: - New-content dots (issue #13)
 //
-// Dot = channel has a feed video published within the resolver's
-// window that isn't in the (server-synced) watch history. Watching
-// any recent video of the channel — on any device — clears it.
+// Dot = the channel's public RSS feed has a video published within the
+// resolver's window that isn't in the (server-synced) watch history.
+// Watching any recent video of the channel — on any device — clears it.
+// RSS is used instead of the subscriptions feed because the TVHTML5
+// feed went relevance-first and silently omits some fresh uploads.
 
 extension SubscriptionsViewController {
     /// History snapshot older than this is refetched on appearance.
     static let newContentHistoryTTL: TimeInterval = 10 * 60
 
-    /// Entry point: called on viewWillAppear and after feed loads.
+    /// Entry point: called on viewWillAppear, after the first feed
+    /// page renders and when channels load. Deferred until the initial
+    /// feed is on screen so the RSS/history burst never competes with
+    /// the startup feed request.
     func refreshNewContentDots() {
-        guard !OAuthClient.shared.isAnonymous else {
+        guard !OAuthClient.shared.isAnonymous, !isLoadingInitial else {
             return
         }
+        refreshRSSUploads()
         if let fetchedAt = newContentHistoryFetchedAt,
            Date().timeIntervalSince(fetchedAt)
            < SubscriptionsViewController.newContentHistoryTTL {
@@ -25,14 +31,13 @@ extension SubscriptionsViewController {
     }
 
     /// Pure recompute from already-loaded inputs; cheap enough to
-    /// run on every feed page or local watch event.
+    /// run on every refresh or local watch event.
     func recomputeNewContentDots() {
         guard let historyIds = newContentHistoryIds else {
             return
         }
-        let feedVideos = selectedChannel == nil ? videos : stashedVideos
         let resolved = NewContentResolver.channelsWithNewContent(
-            feedVideos: feedVideos,
+            uploadsByChannel: newContentUploads,
             watchedVideoIds: historyIds.union(locallyWatchedVideoIds)
         )
         guard resolved != newContentChannelIds else {
@@ -56,6 +61,30 @@ extension SubscriptionsViewController {
 // MARK: - Private Helpers
 
 private extension SubscriptionsViewController {
+    /// The service caches per channel, so calling on every appearance
+    /// is cheap; only stale channels hit the network.
+    func refreshRSSUploads() {
+        let ids = subscribedChannels.map { $0.id }
+        guard !ids.isEmpty, !isLoadingNewContentRSS else {
+            return
+        }
+        isLoadingNewContentRSS = true
+        let includeShorts = UserDefaults.standard.bool(
+            forKey: UserDefaultsKeys.Feed.showShorts
+        )
+        channelRSSService.fetchRecentUploads(
+            channelIds: ids,
+            includeShorts: includeShorts
+        ) { [weak self] uploads in
+            guard let self else {
+                return
+            }
+            self.isLoadingNewContentRSS = false
+            self.newContentUploads = uploads
+            self.recomputeNewContentDots()
+        }
+    }
+
     func fetchHistoryForNewContent() {
         guard !isLoadingNewContentHistory else {
             return
